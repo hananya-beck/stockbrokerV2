@@ -1,5 +1,5 @@
 <!-- bmad:context -->
-<!-- Verified 2026-10-22 against ea13f33. Managed by bmad-project-context; edits inside this block are replaced on refresh. Keep anything you want preserved outside the markers. -->
+<!-- Verified 2026-10-22 against 2972689. Managed by bmad-project-context; edits inside this block are replaced on refresh. Keep anything you want preserved outside the markers. -->
 
 ## stockbrokerV2
 
@@ -17,6 +17,7 @@ Static dashboard (plain `index.html` + ES modules in `src/lib/`) for a monthly �
 ## Where things are
 
 - Pure, unit-tested core: `src/lib/` — conventions in `src/lib/CLAUDE.md` (no fetch/DOM/timers, named exports, JSDoc, one test file per module).
+- UI strings and language switching: `src/lib/i18n.js` (`STRINGS.he`/`STRINGS.en`, `resolveLang`, `DIRECTION`) — the choice persists via a `?lang=` URL param, not storage.
 - Fetch-script internals (bizportal quirks, horizon math, failure handling, test rules): `.claude/rules/fetch-script.md`, loaded when editing `scripts/**`.
 - Data refresh: `.github/workflows/update-data.yml` — daily 05:00 UTC cron, plus `workflow_dispatch` from the page's refresh button.
 - Colors, spacing, fonts: CSS custom properties in `src/styles/tokens.css` — never hard-code a color.
@@ -30,7 +31,7 @@ Static dashboard (plain `index.html` + ES modules in `src/lib/`) for a monthly �
 
 ## Conventions that differ from defaults
 
-- UI text is Hebrew and the page is RTL — match existing wording ("רענן נתונים", "עודכן לאחרונה").
+- UI defaults to Hebrew/RTL, but English/LTR is a fully supported second language (`?lang=en`, never `localStorage` — see Policy) — add new UI strings to both `STRINGS.he` and `STRINGS.en` in `src/lib/i18n.js`, never hard-code text in `index.html`.
 - Show every failure to the user (status text next to the control, plus an alert for auth errors like a 401) — never fail silently.
 
 ## Known pitfalls
