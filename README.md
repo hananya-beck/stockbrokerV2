@@ -6,7 +6,7 @@ across 1/3/5-year windows (annualized return minus a risk-free rate, ÷ annualiz
 25%/35%/40% toward the longer, less noisy windows), and suggests how to split that
 month's deposit across them.
 
-Live site: https://hananya-beck.github.io/stockbroker/
+Live site: https://hananya-beck.github.io/stockbrokerV2/
 
 ## How it works
 
