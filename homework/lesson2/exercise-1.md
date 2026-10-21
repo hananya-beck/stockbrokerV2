@@ -1,7 +1,10 @@
-# EARS requirements — Backtest simulator epic
+# Exercise 1 — Three EARS requirements
 
-v2 goal: simulate what following the dashboard's suggested monthly allocation
-would have returned historically, compared to an equal-weight baseline.
+> Slide 32. v2 epic (section B): **backtest simulator** — simulate what
+> following the dashboard's suggested monthly allocation would have returned
+> historically, compared to an equal-weight baseline. Branch: `feat/backtest-simulator`.
+
+One requirement per EARS pattern, as the exercise asks: event-driven, state-driven, unwanted-behavior.
 
 1. **Event-driven.** When the user enters a start date and a monthly deposit
    amount and clicks "Run backtest," the system shall compute, for each month
