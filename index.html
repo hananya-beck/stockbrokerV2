@@ -64,6 +64,19 @@
   table { width: 100%; border-collapse: collapse; font-size: var(--font-size-base); }
   th, td { padding: var(--space-3) var(--space-2); text-align: start; border-bottom: var(--border-width) solid var(--border); }
   th { color: var(--muted); font-weight: 600; font-size: var(--font-size-sm); }
+  .col-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+    padding: 0;
+  }
+  .sort-indicator { font-size: var(--font-size-xs); min-width: 1em; display: inline-block; }
   .pos { color: var(--good); }
   .neg { color: var(--bad); }
   .na { color: var(--muted); }
@@ -140,20 +153,20 @@
     <table id="fundsTable">
       <thead>
         <tr>
-          <th id="colFund"></th>
-          <th id="colId"></th>
-          <th id="col1m"></th>
-          <th id="col3m"></th>
-          <th id="col1y"></th>
-          <th id="col3y"></th>
-          <th id="col5y"></th>
-          <th id="colVol1y"></th>
-          <th id="colVol3y"></th>
-          <th id="colVol5y"></th>
-          <th id="colVolBlended"></th>
-          <th id="colScore"></th>
-          <th id="colWeight"></th>
-          <th id="colAmount"></th>
+          <th><button type="button" class="col-sort" data-sort="colFund"><span id="colFund"></span><span class="sort-indicator" data-sort-indicator="colFund"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colId"><span id="colId"></span><span class="sort-indicator" data-sort-indicator="colId"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="col1m"><span id="col1m"></span><span class="sort-indicator" data-sort-indicator="col1m"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="col3m"><span id="col3m"></span><span class="sort-indicator" data-sort-indicator="col3m"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="col1y"><span id="col1y"></span><span class="sort-indicator" data-sort-indicator="col1y"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="col3y"><span id="col3y"></span><span class="sort-indicator" data-sort-indicator="col3y"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="col5y"><span id="col5y"></span><span class="sort-indicator" data-sort-indicator="col5y"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colVol1y"><span id="colVol1y"></span><span class="sort-indicator" data-sort-indicator="colVol1y"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colVol3y"><span id="colVol3y"></span><span class="sort-indicator" data-sort-indicator="colVol3y"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colVol5y"><span id="colVol5y"></span><span class="sort-indicator" data-sort-indicator="colVol5y"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colVolBlended"><span id="colVolBlended"></span><span class="sort-indicator" data-sort-indicator="colVolBlended"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colScore"><span id="colScore"></span><span class="sort-indicator" data-sort-indicator="colScore"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colWeight"><span id="colWeight"></span><span class="sort-indicator" data-sort-indicator="colWeight"></span></button></th>
+          <th><button type="button" class="col-sort" data-sort="colAmount"><span id="colAmount"></span><span class="sort-indicator" data-sort-indicator="colAmount"></span></button></th>
         </tr>
       </thead>
       <tbody id="fundsBody"></tbody>
@@ -195,6 +208,62 @@ function cell(v) {
 const tbody = document.getElementById('fundsBody');
 const amountInput = /** @type {HTMLInputElement} */ (document.getElementById('amount'));
 let data = null;
+
+// Weight and amount sort the same way for a fixed deposit, so colAmount reuses colWeight's accessor.
+const SORT_ACCESSORS = {
+  colFund: f => lang === 'he' ? f.name_he : f.name_en,
+  colId: f => f.id,
+  col1m: f => f.metrics.return_1m,
+  col3m: f => f.metrics.return_3m,
+  col1y: f => f.metrics.return_1y,
+  col3y: f => f.metrics.return_3y,
+  col5y: f => f.metrics.return_5y,
+  colVol1y: f => f.metrics.volatility_1y,
+  colVol3y: f => f.metrics.volatility_3y,
+  colVol5y: f => f.metrics.volatility_5y,
+  colVolBlended: f => f.metrics.volatility_blended,
+  colScore: f => f.metrics.risk_adjusted_score,
+  colWeight: f => f.suggested_weight,
+  colAmount: f => f.suggested_weight,
+};
+
+let sortState = { key: null, dir: 1 };
+
+function sortedFunds() {
+  if (!data) return [];
+  const accessor = sortState.key && SORT_ACCESSORS[sortState.key];
+  if (!accessor) return data.funds;
+  return data.funds
+    .map((f, i) => ({ f, i }))
+    .sort((a, b) => {
+      const av = accessor(a.f);
+      const bv = accessor(b.f);
+      const aNull = av === null || av === undefined;
+      const bNull = bv === null || bv === undefined;
+      if (aNull || bNull) return aNull === bNull ? a.i - b.i : aNull ? 1 : -1;
+      const cmp = typeof av === 'string' ? av.localeCompare(bv) : av - bv;
+      return (cmp || a.i - b.i) * sortState.dir;
+    })
+    .map(x => x.f);
+}
+
+function updateSortIndicators() {
+  for (const el of document.querySelectorAll('[data-sort-indicator]')) {
+    const th = el.closest('th');
+    const active = el.dataset.sortIndicator === sortState.key;
+    el.textContent = active ? (sortState.dir === 1 ? '▲' : '▼') : '';
+    if (th) th.setAttribute('aria-sort', active ? (sortState.dir === 1 ? 'ascending' : 'descending') : 'none');
+  }
+}
+
+for (const btn of document.querySelectorAll('.col-sort')) {
+  btn.addEventListener('click', () => {
+    const key = /** @type {HTMLElement} */ (btn).dataset.sort;
+    sortState = sortState.key === key ? { key, dir: sortState.dir * -1 } : { key, dir: 1 };
+    updateSortIndicators();
+    render();
+  });
+}
 
 function applyStaticText() {
   document.documentElement.lang = lang;
@@ -243,7 +312,7 @@ function render() {
   if (!data) return;
   const amount = parseFloat(amountInput.value) || 0;
   tbody.innerHTML = '';
-  for (const f of data.funds) {
+  for (const f of sortedFunds()) {
     const row = buildFundRowViewModel(f, amount);
     const primaryName = lang === 'he' ? row.nameHe : row.nameEn;
     const secondaryName = lang === 'he' ? row.nameEn : row.nameHe;
@@ -280,6 +349,7 @@ function render() {
 amountInput.addEventListener('input', render);
 
 applyStaticText();
+updateSortIndicators();
 
 async function load() {
   const res = await fetch('data/funds.json', { cache: 'no-store' });
