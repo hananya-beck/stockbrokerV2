@@ -61,8 +61,43 @@ actually invoked. The combined size of all 29 skills' `.md` files on disk is
 ~764 KB, but that's not the right proxy for the always-loaded cost — only
 the short descriptions are resident by default.
 
-**This number needs to come from the live `/skills` view, not from me**: run
-`claude` in this directory, then `/skills`, press `t` to sort by token cost,
-and note the total next to the `bmad-*` entries. That's the authoritative
-source the exercise points at (slide 36's hint), and it isn't something a
-non-interactive install or a file-size estimate can substitute for.
+**This number comes from the live `/skills` view, not from me**: run `claude`
+in this directory, then `/skills`, press `t` to sort by token cost. That's
+the authoritative source the exercise points at (slide 36's hint), and it
+isn't something a non-interactive install or a file-size estimate can
+substitute for. Sorted by `t` (highest first), the 29 `bmad-*` entries:
+
+| Skill | Tokens |
+| --- | ---: |
+| bmad-deep-recon | ~250 |
+| bmad-review | ~180 |
+| bmad-build | ~160 |
+| bmad-architecture | ~130 |
+| bmad-spec | ~130 |
+| bmad-sprint-planning | ~130 |
+| bmad-forge-idea | ~120 |
+| bmad-retrospective | ~110 |
+| bmad-prfaq | ~110 |
+| bmad-party-mode | ~100 |
+| bmad-correct-course | ~80 |
+| bmad-ux | ~80 |
+| bmad-advanced-elicitation | ~80 |
+| bmad-project-context | ~70 |
+| bmad-walkthrough | ~70 |
+| bmad-help | ~70 |
+| bmad-customize | ~70 |
+| bmad-code-review | ~60 |
+| bmad-agent-analyst | ~60 |
+| bmad-qa-generate-e2e-tests | ~50 |
+| bmad-agent-dev | ~50 |
+| bmad-brainstorming | ~50 |
+| bmad-agent-pm | ~50 |
+| bmad-agent-architect | ~50 |
+| bmad-create-epics-and-stories | ~50 |
+| bmad-product-brief | ~50 |
+| bmad-agent-ux-designer | ~40 |
+| bmad-prd | ~40 |
+| bmad-build-auto | ~30 |
+
+That's **~2,520 tokens** resident every session just for the `bmad-*` skill
+descriptions, before any skill body is ever loaded.
