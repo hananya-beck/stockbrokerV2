@@ -61,6 +61,7 @@
     color: var(--text);
     width: var(--input-width);
   }
+  .table-scroll { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: var(--font-size-base); }
   th, td { padding: var(--space-3) var(--space-2); text-align: start; border-bottom: var(--border-width) solid var(--border); }
   th { color: var(--muted); font-weight: 600; font-size: var(--font-size-sm); }
@@ -151,30 +152,32 @@
   </div>
 
   <div class="card">
-    <table id="fundsTable">
-      <thead>
-        <tr>
-          <th><button type="button" class="col-sort" data-sort="colFund"><span id="colFund"></span><span class="sort-indicator" data-sort-indicator="colFund"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colId"><span id="colId"></span><span class="sort-indicator" data-sort-indicator="colId"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="col1m"><span id="col1m"></span><span class="sort-indicator" data-sort-indicator="col1m"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="col3m"><span id="col3m"></span><span class="sort-indicator" data-sort-indicator="col3m"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="col1y"><span id="col1y"></span><span class="sort-indicator" data-sort-indicator="col1y"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="col3y"><span id="col3y"></span><span class="sort-indicator" data-sort-indicator="col3y"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="col5y"><span id="col5y"></span><span class="sort-indicator" data-sort-indicator="col5y"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colVol1y"><span id="colVol1y"></span><span class="sort-indicator" data-sort-indicator="colVol1y"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colVol3y"><span id="colVol3y"></span><span class="sort-indicator" data-sort-indicator="colVol3y"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colVol5y"><span id="colVol5y"></span><span class="sort-indicator" data-sort-indicator="colVol5y"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colVolBlended"><span id="colVolBlended"></span><span class="sort-indicator" data-sort-indicator="colVolBlended"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colScore"><span id="colScore"></span><span class="sort-indicator" data-sort-indicator="colScore"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colWeight"><span id="colWeight"></span><span class="sort-indicator" data-sort-indicator="colWeight"></span></button></th>
-          <th><button type="button" class="col-sort" data-sort="colAmount"><span id="colAmount"></span><span class="sort-indicator" data-sort-indicator="colAmount"></span></button></th>
-        </tr>
-      </thead>
-      <tbody id="fundsBody"></tbody>
-      <tfoot>
-        <tr class="summary"><td colspan="14" id="fundsSummary"></td></tr>
-      </tfoot>
-    </table>
+    <div class="table-scroll">
+      <table id="fundsTable">
+        <thead>
+          <tr>
+            <th><button type="button" class="col-sort" data-sort="colFund"><span id="colFund"></span><span class="sort-indicator" data-sort-indicator="colFund"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colId"><span id="colId"></span><span class="sort-indicator" data-sort-indicator="colId"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="col1m"><span id="col1m"></span><span class="sort-indicator" data-sort-indicator="col1m"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="col3m"><span id="col3m"></span><span class="sort-indicator" data-sort-indicator="col3m"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="col1y"><span id="col1y"></span><span class="sort-indicator" data-sort-indicator="col1y"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="col3y"><span id="col3y"></span><span class="sort-indicator" data-sort-indicator="col3y"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="col5y"><span id="col5y"></span><span class="sort-indicator" data-sort-indicator="col5y"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colVol1y"><span id="colVol1y"></span><span class="sort-indicator" data-sort-indicator="colVol1y"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colVol3y"><span id="colVol3y"></span><span class="sort-indicator" data-sort-indicator="colVol3y"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colVol5y"><span id="colVol5y"></span><span class="sort-indicator" data-sort-indicator="colVol5y"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colVolBlended"><span id="colVolBlended"></span><span class="sort-indicator" data-sort-indicator="colVolBlended"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colScore"><span id="colScore"></span><span class="sort-indicator" data-sort-indicator="colScore"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colWeight"><span id="colWeight"></span><span class="sort-indicator" data-sort-indicator="colWeight"></span></button></th>
+            <th><button type="button" class="col-sort" data-sort="colAmount"><span id="colAmount"></span><span class="sort-indicator" data-sort-indicator="colAmount"></span></button></th>
+          </tr>
+        </thead>
+        <tbody id="fundsBody"></tbody>
+        <tfoot>
+          <tr class="summary"><td colspan="14" id="fundsSummary"></td></tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 
   <dialog id="tokenDialog" class="card">
