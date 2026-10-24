@@ -152,7 +152,17 @@ def read_previous_history(path):
     return funds
 
 
-def nav_history_payload(series_by_id, generated_at, previous=None):
+def iso_last_date(value):
+    """`value` as an ISO date; a day-first `dd/mm/YYYY` is converted, anything else is None."""
+    if _is_iso_date(value):
+        return value
+    try:
+        return datetime.strptime(value, "%d/%m/%Y").date().isoformat()
+    except (TypeError, ValueError):
+        return None
+
+
+def nav_history_payload(series_by_id, generated_at, previous=None, failed_ids=()):
     previous = previous or {}
     merged = {
         fund_id: {
@@ -163,8 +173,12 @@ def nav_history_payload(series_by_id, generated_at, previous=None):
         }
         for fund_id, series in series_by_id.items()
     }
-    carried = {k: v for k, v in previous.items() if k not in series_by_id}
-    return {"generated_at": generated_at, "funds": {**merged, **carried}}
+    stale = {
+        fund_id: {"stale": True, "points": previous.get(fund_id, {}).get("points", [])}
+        for fund_id in failed_ids
+        if fund_id not in series_by_id
+    }
+    return {"generated_at": generated_at, "funds": {**stale, **merged}}
 
 
 def trailing_return(series, days):
@@ -257,6 +271,22 @@ def compute_metrics(series, risk_free_rate=DEFAULT_RISK_FREE_RATE):
     return metrics
 
 
+def empty_metrics():
+    """All-null metrics with the same keys `compute_metrics` produces."""
+    keys = [f"return_{label}" for label in SHORT_HORIZONS]
+    for label in LONG_HORIZONS:
+        keys += [f"return_{label}", f"volatility_{label}"]
+    keys += [
+        "score_basis",
+        "risk_adjusted_score",
+        "volatility_blended",
+        "history_days",
+        "last_price",
+        "last_date",
+    ]
+    return dict.fromkeys(keys)
+
+
 def allocate_weights(funds):
     scored = [f for f in funds if f["metrics"]["risk_adjusted_score"] is not None]
     if not scored:
@@ -288,6 +318,23 @@ def allocate_weights(funds):
     # Normalize rounding drift back to exactly 1.0.
     drift = 1.0 - sum(f["suggested_weight"] for f in funds)
     funds[0]["suggested_weight"] = round(funds[0]["suggested_weight"] + drift, 4)
+
+
+def stale_metrics(fund_id, previous, stored_history):
+    """Previous metrics for a failed fund (all null when none), warning about what is missing."""
+    kept = previous.get(fund_id)
+    missing = []
+    if not isinstance(kept, dict):
+        missing.append("previous metrics")
+    if not stored_history.get(fund_id, {}).get("points"):
+        missing.append("stored points")
+    if missing:
+        print(
+            f"Warning: fund {fund_id} has no {' and no '.join(missing)}",
+            file=sys.stderr,
+        )
+    metrics = {**empty_metrics(), **(kept if isinstance(kept, dict) else {})}
+    return {**metrics, "last_date": iso_last_date(metrics["last_date"])}
 
 
 def main():
@@ -324,10 +371,15 @@ def main():
         except Exception as exc:  # noqa: BLE001 - one bad fund shouldn't stop the run
             failures.append(entry["id"])
             print(f"Failed to fetch fund {entry['id']}: {exc}", file=sys.stderr)
-            if entry["id"] in previous:
-                funds.append({**entry, "metrics": previous[entry["id"]], "stale": True})
+            funds.append(
+                {
+                    **entry,
+                    "metrics": stale_metrics(entry["id"], previous, stored_history),
+                    "stale": True,
+                }
+            )
 
-    if not funds:
+    if not series_by_id:
         sys.exit("All fund fetches failed; leaving existing output untouched")
 
     funds.sort(
@@ -344,16 +396,14 @@ def main():
         json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print(f"Wrote {OUTPUT} with {len(funds)} funds")
-    if series_by_id:
-        # Keep the last good history when every fetch failed.
-        history = nav_history_payload(
-            series_by_id, output["generated_at"], stored_history
-        )
-        NAV_HISTORY.write_text(
-            json.dumps(history, ensure_ascii=False, indent=2, allow_nan=False),
-            encoding="utf-8",
-        )
-        print(f"Wrote {NAV_HISTORY} with {len(series_by_id)} funds")
+    history = nav_history_payload(
+        series_by_id, output["generated_at"], stored_history, failures
+    )
+    NAV_HISTORY.write_text(
+        json.dumps(history, ensure_ascii=False, indent=2, allow_nan=False),
+        encoding="utf-8",
+    )
+    print(f"Wrote {NAV_HISTORY} with {len(history['funds'])} funds")
     if failures:
         print(f"Warning: {len(failures)} fund(s) failed: {', '.join(failures)}", file=sys.stderr)
 
