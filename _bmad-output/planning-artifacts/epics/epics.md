@@ -208,6 +208,7 @@ So that I only run backtests the data supports, and I see why when I can't.
 **And** the page writes nothing to `localStorage`, `sessionStorage`, IndexedDB or cookies (AD-7, NFR4)
 **And** when a fund's history is stale, its name shows a stale label next to the refresh control, with the date of its last point, in the selected language (FR7, AD-2)
 **And** the page takes the stale flag from `nav-history.json` and never derives it from dates (AD-2)
+**And** the controls sit above the chart, follow the page's right-to-left layout in Hebrew, and fit a 360px-wide viewport with no horizontal scrolling (FR1, FR5)
 **And** every new string exists in both `STRINGS.he` and `STRINGS.en` (NFR2)
 
 ### Story 2.5: Show the comparison chart
