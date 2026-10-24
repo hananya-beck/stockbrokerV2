@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-25-2026 00:34
-last_updated: 10-25-2026 02:00
+last_updated: 10-25-2026 01:59
 project: stockbrokerV2
 project_key: NOKEY
 tracking_system: file-system
@@ -40,7 +40,7 @@ development_status:
   1-2-merge-each-run-into-the-stored-history: done
   1-3-keep-the-last-good-data-when-a-fetch-fails: done
   1-4-commit-the-history-and-fund-list-together-atomically: done
-  epic-1-retrospective: optional
+  epic-1-retrospective: done
 
   epic-2: backlog
   2-1-simulate-the-suggested-allocation-and-the-equal-weight-basel: backlog
@@ -49,3 +49,53 @@ development_status:
   2-4-pick-inputs-and-see-the-bounds-on-the-dashboard: backlog
   2-5-show-the-comparison-chart: backlog
   epic-2-retrospective: optional
+action_items:
+  - id: "epic-1-retro-item-1-filter-each-fund-series-to-finite-positi"
+    epic: 1
+    action: "Filter each fund series to finite positive closes before computing metrics,
+      feed the same series to history, and set series_by_id before metrics run (F2,
+      F3)"
+    owner: "Hananya"
+    status: open
+    ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
+  - id: "epic-1-retro-item-2-write-funds-json-with-allow_nan-false-an"
+    epic: 1
+    action: "Write funds.json with allow_nan=False and add a main-level test that
+      parses funds.json strictly (F1)"
+    owner: "Hananya"
+    status: open
+    ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
+  - id: "epic-1-retro-item-3-add-a-top-level-concurrency-group-update"
+    epic: 1
+    action: "Add a top-level concurrency group update-data with cancel-in-progress
+      false to update-data.yml (F4)"
+    owner: "Hananya"
+    status: open
+    ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
+  - id: "epic-1-retro-item-4-replace-the-text-checks-on-the-workflow"
+    epic: 1
+    action: "Replace the text checks on the workflow with a YAML parse that asserts
+      no continue-on-error, no set +e, and fetch before commit (F13)"
+    owner: "Hananya"
+    status: open
+    ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
+  - id: "epic-1-retro-item-5-add-data-tmp-to-gitignore-f11"
+    epic: 1
+    action: "Add data/*.tmp to .gitignore (F11)"
+    owner: "Hananya"
+    status: open
+    ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
+  - id: "epic-1-retro-item-6-write-the-regenerate-not-hand-merge-reco"
+    epic: 1
+    action: "Write the regenerate-not-hand-merge recovery path for a corrupt nav-history.json
+      into add-fund SKILL.md (F6)"
+    owner: "Hananya"
+    status: open
+    ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
+  - id: "epic-1-retro-item-7-add-a-rule-that-workflows-committing-gen"
+    epic: 1
+    action: "Add a rule that workflows committing generated files must set a concurrency
+      group (P4)"
+    owner: "Hananya"
+    status: open
+    ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
