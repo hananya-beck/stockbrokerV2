@@ -7,6 +7,7 @@ Writes the result to data/funds.json, which the static site (index.html) reads.
 import itertools
 import json
 import math
+import os
 import sys
 import statistics
 import time
@@ -337,6 +338,22 @@ def stale_metrics(fund_id, previous, stored_history):
     return {**metrics, "last_date": iso_last_date(metrics["last_date"])}
 
 
+def write_files_atomically(files):
+    """Write every (path, text) pair to a temp file beside its target, then move them into place in order.
+
+    Order matters: a crash between moves leaves the earlier files new and the later ones old.
+    """
+    temps = [(path.with_name(path.name + ".tmp"), path) for path, _ in files]
+    try:
+        for (temp, _), (_, text) in zip(temps, files):
+            temp.write_text(text, encoding="utf-8")
+        for temp, path in temps:
+            os.replace(temp, path)
+    finally:
+        for temp, _ in temps:
+            temp.unlink(missing_ok=True)
+
+
 def main():
     config = json.loads(FUNDS_CONFIG.read_text(encoding="utf-8"))
     risk_free_rate = config.get("risk_free_rate", DEFAULT_RISK_FREE_RATE)
@@ -392,18 +409,14 @@ def main():
         "generated_at": datetime.now(UTC).isoformat(),
         "funds": funds,
     }
-    OUTPUT.write_text(
-        json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-    print(f"Wrote {OUTPUT} with {len(funds)} funds")
     history = nav_history_payload(
         series_by_id, output["generated_at"], stored_history, failures
     )
-    NAV_HISTORY.write_text(
-        json.dumps(history, ensure_ascii=False, indent=2, allow_nan=False),
-        encoding="utf-8",
-    )
+    history_text = json.dumps(history, ensure_ascii=False, indent=2, allow_nan=False)
+    output_text = json.dumps(output, ensure_ascii=False, indent=2)
+    write_files_atomically([(NAV_HISTORY, history_text), (OUTPUT, output_text)])
     print(f"Wrote {NAV_HISTORY} with {len(history['funds'])} funds")
+    print(f"Wrote {OUTPUT} with {len(funds)} funds")
     if failures:
         print(f"Warning: {len(failures)} fund(s) failed: {', '.join(failures)}", file=sys.stderr)
 

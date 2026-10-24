@@ -15,6 +15,6 @@ description: Add a new TASE fund, ETF or קרן סל to the dashboard by its biz
 4. Append `{"id": "...", "name_he": "...", "name_en": "..."}` to `funds` in `data/funds_config.json`, keeping the UTF-8 Hebrew as-is.
 5. Add the fund to the "The 7 funds" table in `README.md`, and update the count in the heading and anywhere else the README mentions it.
 6. Run `python scripts/fetch_data.py`, then show the new fund's score, `score_basis` and the updated weights for every fund. Funds with under 6 months of history get only the minimum weight.
-7. Run `python -m pytest tests -q`. Commit the config, README and `data/funds.json` together, and push only if the user asks. Rebase onto the daily data bot's commit if the push is rejected.
+7. Run `python -m pytest tests -q`. Commit the config, README, `data/funds.json` and `data/nav-history.json` together, and push only if the user asks. Rebase onto the daily data bot's commit if the push is rejected.
 
 To remove or rename a fund, edit the same two files and rerun step 6.

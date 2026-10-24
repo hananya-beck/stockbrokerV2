@@ -26,6 +26,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/funds.json
+          git add data/funds.json data/nav-history.json
           git diff --cached --quiet || git commit -m "Update fund data"
+          git pull --rebase
           git push

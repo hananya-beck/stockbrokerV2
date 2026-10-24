@@ -592,3 +592,106 @@ def test_both_files_list_every_configured_fund_with_the_same_stale_flag(tmp_path
     funds = _read_funds(tmp_path)
     assert set(funds) == set(history["funds"]) == {"1", "2", "3"}
     assert all(funds[i]["stale"] == history["funds"][i]["stale"] for i in funds)
+
+
+def _ok_series():
+    return _series([(1, 1.0), (2, 1.1)])
+
+
+def _leftover_temps(tmp_path):
+    return sorted(p.name for p in tmp_path.glob("*.tmp"))
+
+
+def test_main_moves_history_before_fund_list_and_leaves_no_temp(tmp_path, monkeypatch):
+    import fetch_data
+
+    moved = []
+    real_replace = fetch_data.os.replace
+    monkeypatch.setattr(
+        fetch_data.os, "replace", lambda src, dst: moved.append(Path(dst).name) or real_replace(src, dst)
+    )
+    _run_main(tmp_path, monkeypatch, ["1"], lambda o, i: _ok_series())
+
+    assert moved == ["nav-history.json", "funds.json"]
+    assert _leftover_temps(tmp_path) == []
+
+
+def test_unserialisable_history_writes_neither_file(tmp_path, monkeypatch):
+    _store(tmp_path, history={"1": _entry(_pts((1, 1.0)))}, funds=[_previous_fund("1")])
+    names = ("funds.json", "nav-history.json")
+    before = {name: (tmp_path / name).read_bytes() for name in names}
+    fetch_data = _configure(tmp_path, monkeypatch, ["1"], lambda o, i: _ok_series())
+    monkeypatch.setattr(
+        fetch_data, "nav_history_payload", lambda *a, **k: {"funds": {"1": float("nan")}}
+    )
+
+    with pytest.raises(ValueError):
+        fetch_data.main()
+
+    assert {name: (tmp_path / name).read_bytes() for name in names} == before
+    assert _leftover_temps(tmp_path) == []
+
+
+def test_failed_temp_write_replaces_nothing_and_removes_temps(tmp_path):
+    import fetch_data
+
+    first, second = tmp_path / "a.json", tmp_path / "b.json"
+    first.write_text("old", encoding="utf-8")
+
+    with pytest.raises(TypeError):
+        fetch_data.write_files_atomically([(first, "new"), (second, None)])
+
+    assert first.read_text(encoding="utf-8") == "old"
+    assert not second.exists()
+    assert _leftover_temps(tmp_path) == []
+
+
+def test_failed_fund_list_move_leaves_new_history_old_funds_and_no_temp(tmp_path, monkeypatch):
+    import fetch_data
+
+    _store(tmp_path, history={"1": _entry(_pts((1, 1.0)))}, funds=[_previous_fund("1")])
+    old_funds = (tmp_path / "funds.json").read_bytes()
+    old_history = (tmp_path / "nav-history.json").read_bytes()
+    real_replace = fetch_data.os.replace
+
+    def replace(src, dst):
+        if Path(dst).name == "funds.json":
+            raise OSError("disk gone")
+        real_replace(src, dst)
+
+    main = _configure(tmp_path, monkeypatch, ["1"], lambda o, i: _ok_series())
+    monkeypatch.setattr(fetch_data.os, "replace", replace)
+
+    with pytest.raises(OSError):
+        main.main()
+
+    assert (tmp_path / "funds.json").read_bytes() == old_funds
+    assert (tmp_path / "nav-history.json").read_bytes() != old_history
+    assert _leftover_temps(tmp_path) == []
+
+
+REPO = Path(__file__).resolve().parent.parent
+
+
+def _lines_naming(path, needle):
+    return [
+        line
+        for line in (REPO / path).read_text(encoding="utf-8").splitlines()
+        if needle in line
+    ]
+
+
+@pytest.mark.parametrize(
+    "path", [".github/workflows/update-data.yml", ".claude/skills/add-fund/SKILL.md"]
+)
+def test_every_line_staging_funds_json_also_stages_nav_history(path):
+    lines = _lines_naming(path, "data/funds.json")
+    assert lines
+    assert all("data/nav-history.json" in line for line in lines)
+
+
+def test_workflow_pulls_with_rebase_before_a_push_that_is_not_swallowed():
+    text = (REPO / ".github/workflows/update-data.yml").read_text(encoding="utf-8")
+    assert "git pull --rebase" in text
+    assert text.index("git pull --rebase") < text.index("git push")
+    assert all("||" not in line for line in _lines_naming(".github/workflows/update-data.yml", "git push"))
