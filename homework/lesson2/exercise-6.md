@@ -18,23 +18,25 @@
   against an equal-weight baseline. Point-in-time recomputed weights stay out, and the PRD
   says so: the MVP cannot show whether the scoring method added value over time.
 - **History floor:** the earliest month from which every fund has NAV data. A backtest
-  needs at least 12 months; below that, the run is disabled.
+  needs at least 6 months, the shortest horizon the scoring already uses. A 12-month
+  minimum would have disabled the run today, since the newest fund has about 9 to 10
+  months of history.
 - **Gap rules:** a fund's units carry their last known NAV forward. A missing fund's
   baseline share is redistributed the same way as its suggested weight, so both lines
   follow one rule. The current, incomplete month is excluded.
-- **Pipeline owns history:** the daily pipeline persists each fund's NAV series, and a
-  manual `workflow_dispatch` runs the one-time backfill. `index.html` makes no
-  bizportal request.
+- **Pipeline owns history:** the daily pipeline persists each fund's NAV series. The
+  source already returns the full series each run, so the first run stores the history
+  and no separate backfill is needed. `index.html` makes no bizportal request.
 - **Gross of fees and taxes:** the chart and final values say so, and fee modelling is
   deferred.
-- **Assumed, to confirm:** deposits invested at each month's first available NAV; a month
-  with no NAV for any fund holds the deposit as cash and is marked; the 12-month minimum;
-  and the 5 MB and 2-second working targets.
+- **Decided on owner delegation (2026-10-25):** deposits invested at each month's first
+  available NAV; a month with no NAV for any fund holds the deposit as cash and is marked;
+  the 6-month minimum; and the 5 MB and 2-second targets, which stand.
 
 ## What shipped
 
 - `_bmad-output/planning-artifacts/prds/prd-stockbrokerV2-2026-10-24/prd.md` — `status: final`,
-  about 1,800 words. Seven functional requirements (FR-1 to FR-7) across two features, the
+  about 1,950 words. Seven functional requirements (FR-1 to FR-7) across two features, the
   backtest run and the NAV history. Two primary success metrics (a usability check and a
   fixture check) and one counter-metric.
 - `validation-report.md` — the Validate report. Its markdown twin records the 19 findings
@@ -48,8 +50,9 @@
   found 0 critical, 6 high, 4 medium and 9 low findings, with Done-ness clarity rated thin.
 - The high findings were the in-sample hindsight bias, the unnamed point-in-time trade-off,
   the history floor, gap valuation, baseline gap handling, and backfill mechanics.
-- Every finding was fixed in the PRD, except OQ-2 (the 5 MB bound), which stays open until
-  it is measured after the first backfill.
+- Every finding was fixed in the PRD. The 5 MB bound it raised is now answered from the
+  data, and the later data check changed two of the earlier fixes; both are noted in
+  `validation-report.md`.
 - The HTML report from the template was not generated. The markdown twin is the record.
 - I did not re-run Validate after the fixes, so the grade is not re-scored.
 
@@ -63,8 +66,11 @@
 - The exercise card's own Goal and Done-when text was not retrievable from the course
   page. These checks come from the PRD workflow's finalize and validate steps.
 
-## Still open
+## Open questions, answered
 
-- Hananya should confirm the assumptions above and the two open questions in the PRD:
-  how far back the source returns NAV for each fund, and whether the backfilled history
-  fits the 5 MB working target.
+- **How far back does the source return NAV?** About 1,230 trading days (roughly 4.9
+  years) for the five older funds, and 240 and 200 for the two newest. The history floor
+  is set by the newest fund, about 9 to 10 months back today.
+- **Does the stored history fit 5 MB?** Yes. The seven series total 6,587 points, about
+  165 KB as JSON. This is an estimate from the point count, not a measured size.
+- The owner delegated these decisions, so nothing is waiting on Hananya.

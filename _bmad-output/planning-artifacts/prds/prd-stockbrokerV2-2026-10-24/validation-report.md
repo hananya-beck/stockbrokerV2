@@ -5,6 +5,7 @@
 - **Run at:** 2026-10-25
 - **Grade (as reviewed):** Fair — six high findings and one thin dimension (Done-ness clarity)
 - **Grade (after fixes):** not re-scored; see the revision notes below
+- **Superseded in part (2026-10-25):** the 12-month minimum is now 6 months, and the manual backfill is replaced by the first FR-6 run. The owner delegated the open decisions, and the data check is in `.memlog.md`.
 
 ## Overall verdict
 Tidy and proportionate for a solo tool: explicit Non-Goals, indexed assumptions, contiguous IDs and one named protagonist. The risk was how far the chart can be trusted. Today's weights come from trailing scores that overlap the backtested months, so the test is in-sample, and the PRD did not say so. Several requirements also left gap-month valuation, baseline handling and backfill mechanics undefined.

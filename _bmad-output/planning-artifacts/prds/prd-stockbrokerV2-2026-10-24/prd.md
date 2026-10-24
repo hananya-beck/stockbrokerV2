@@ -9,7 +9,7 @@ updated: 2026-10-25
 
 ## 0. Document Purpose
 
-This PRD defines what the backtest simulator must do and where its scope stops. It builds on `brief-stockbrokerV2-2026-10-22/brief.md` and its `addendum.md`, which are not repeated here. The reader is Hananya, the sole user and maintainer, and whoever builds it in this repo. Requirements describe capabilities; implementation choices belong to the architecture notes.
+This PRD defines what the backtest simulator must do and where its scope stops. It builds on `brief-stockbrokerV2-2026-10-22/brief.md` and its `addendum.md`, which are not repeated here. The reader is Hananya, the sole user and maintainer, and whoever builds it in this repo. Requirements describe capabilities; implementation choices belong to the architecture notes. The owner delegated the open decisions on 2026-10-25, so every decision below is marked `[DECIDED]`, and the questions that were open are answered in §8.
 
 ## 1. Vision
 
@@ -28,7 +28,7 @@ Anyone other than the maintainer. There are no accounts, saved runs or sharing.
 
 ### 2.3 Key User Journeys
 
-- **UJ-1. Hananya checks the score before trusting it.** Hananya opens the dashboard, picks a start month two years back and a ₪1,000 monthly deposit, clicks "Run backtest," and reads the chart. The suggested-allocation line finishes above or below the equal-weight baseline line, and any months with incomplete fund data are marked.
+- **UJ-1. Hananya checks the score before trusting it.** Hananya opens the dashboard, picks the earliest start month the dashboard allows and a ₪1,000 monthly deposit, clicks "Run backtest," and reads the chart. The suggested-allocation line finishes above or below the equal-weight baseline line, and any months with incomplete fund data are marked.
 
 ## 3. Glossary
 
@@ -57,11 +57,11 @@ The user can choose a start month no earlier than the history floor and a positi
 - A start month before the history floor is rejected, and the message shows next to the control with the floor date.
 - Months after the last complete calendar month cannot be selected.
 - A deposit that is zero, negative or not a number does not start the run, and the error shows next to the control.
-- When the history floor is less than 12 months before the last complete month, the run is disabled and the page says so next to the control. [ASSUMPTION: 12 months is the shortest backtest worth reading.]
+- When the history floor is less than 6 months before the last complete month, the run is disabled and the page says so next to the control. [DECIDED: 6 months is the shortest horizon the scoring already uses (`6m` in `scripts/fetch_data.py`), so it is the shortest backtest worth reading.]
 
 #### FR-2: Simulate the suggested allocation
 
-The system shall invest each month's deposit across the funds in proportion to their suggested weights, at each fund's NAV, and value the holdings at each month's last available NAV. Realizes UJ-1. [ASSUMPTION: deposits are invested at the first available NAV of the month.]
+The system shall invest each month's deposit across the funds in proportion to their suggested weights, at each fund's NAV, and value the holdings at each month's last available NAV. Realizes UJ-1. [DECIDED: deposits are invested at the first available NAV of the month.]
 
 **Consequences (testable):**
 - With every fund's NAV flat, the final cumulative value equals the total deposited.
@@ -78,7 +78,7 @@ The system shall run the same deposits split evenly across every fund in `data/f
 
 #### FR-4: Handle missing NAV data
 
-If a fund has no NAV for a month in the range (for example, a gap in its series), the system shall exclude that fund's weight for that month and redistribute it proportionally across funds that do have NAV. The fund's existing units are valued at its last known NAV, carried forward. The month is marked on the chart. The system shall not treat missing NAV as zero, and it shall not stop the run. Realizes UJ-1. [ASSUMPTION: if no fund has NAV for a month, that month's deposit is held as cash at zero growth and the month is marked.]
+If a fund has no NAV for a month in the range (for example, a gap in its series), the system shall exclude that fund's weight for that month and redistribute it proportionally across funds that do have NAV. The fund's existing units are valued at its last known NAV, carried forward. The month is marked on the chart. The system shall not treat missing NAV as zero, and it shall not stop the run. Realizes UJ-1. [DECIDED: if no fund has NAV for a month, that month's deposit is held as cash at zero growth and the month is marked.]
 
 **Consequences (testable):**
 - Fixture: weights 50/50, fund B has no NAV in month 1 only. The whole ₪100 deposit of month 1 goes to fund A.
@@ -96,7 +96,7 @@ The system shall draw both cumulative-value lines on one chart. The suggested al
 **Feature-specific NFRs:**
 - The run reads only stored NAV history and the current `data/funds.json`. It makes no network request.
 - Every new UI string is added in both Hebrew and English, per `src/lib/i18n.js`.
-- Working targets: stored NAV history totals under 5 MB, and a full backtest run finishes in under 2 seconds on the maintainer's machine. [ASSUMPTION: these bounds are working targets to measure after the first backfill.]
+- Working targets: stored NAV history totals under 5 MB, and a full backtest run finishes in under 2 seconds on the maintainer's machine. [DECIDED: these targets stand; §8 shows the stored history fits well under the size target.]
 
 ### 4.2 NAV history
 
@@ -110,14 +110,14 @@ The daily pipeline shall keep each fund's daily NAV series in `data/` alongside 
 - After one run, each fund's stored series contains every day returned by the source for that fund.
 - A later run does not drop days from an earlier run.
 
-#### FR-7: Backfill existing history through the pipeline
+#### FR-7: Store the full history the source returns
 
-A manual dispatch of the pipeline runs the one-time backfill of existing history. Scheduled daily runs then append new days. The backfill runs in the pipeline, not in the browser, and `index.html` makes no bizportal request.
+The source already returns each fund's full series on every run, so the first run after FR-6 stores the history; no separate backfill is needed. `index.html` makes no bizportal request.
 
 **Consequences (testable):**
-- The backfill is triggered by a `workflow_dispatch` input in `.github/workflows/update-data.yml`, and runs in the pipeline, never in `src/` or `index.html`.
-- After the backfill, the stored history records the earliest date reached for each fund, and the page shows that floor.
-- If the backfill fails or returns less history than the source has, the data status next to the refresh control shows the failure.
+- The series is stored by `scripts/fetch_data.py` and committed by `.github/workflows/update-data.yml`, never written from `src/` or `index.html`.
+- After that first run, the stored history starts at each fund's earliest date the source returns, and the page shows the history floor.
+- If a run fails to fetch a fund's series, the page shows that fund's stored history as stale, next to the refresh control. The fund's previous series is kept.
 - `data/funds.json` is regenerated by the pipeline and is not hand-edited.
 
 ## 5. Non-Goals (Explicit)
@@ -127,14 +127,14 @@ A manual dispatch of the pipeline runs the one-time backfill of existing history
 - Validating the score out of sample. The weights come from trailing scores ending today, which overlap the backtested months, so the result is in-sample and tends to flatter the suggested allocation.
 - Accounts, saved runs, or sharing.
 - Forecasting returns, or giving investment advice.
-- Modelling fees, taxes or fund management charges. [ASSUMPTION: the simulation is gross of fees and taxes, so it overstates the returns of both lines.]
+- Modelling fees, taxes or fund management charges. [DECIDED: the simulation is gross of fees and taxes, so it overstates the returns of both lines.]
 
 ## 6. MVP Scope
 
 ### 6.1 In Scope
 
 - FR-1 to FR-5: the backtest run and its comparison chart.
-- FR-6 and FR-7: stored NAV history and its one-time backfill.
+- FR-6 and FR-7: stored NAV history, from the first pipeline run that keeps it.
 
 ### 6.2 Out of Scope for MVP
 
@@ -150,16 +150,18 @@ A manual dispatch of the pipeline runs the one-time backfill of existing history
 **Counter-metrics (do not optimize)**
 - **SM-C1**: The allocation formula is not changed in the same change set as backtest results. Counterbalances SM-1.
 
-## 8. Open Questions
+## 8. Resolved Questions
 
-1. How far back does the source return daily NAV for each fund? This sets the history floor and whether the two-year example in UJ-1 is possible.
-2. Does the backfilled history fit the 5 MB working target? Measure after the first backfill.
+These were open in the first draft. The owner delegated them, and they are answered from the repo's data.
 
-## 9. Assumptions Index
+1. **How far back does the source return daily NAV?** The current `data/funds.json` shows `history_days` of about 1,230 trading days (roughly 4.9 years) for the five older funds, and 240 and 200 for the two newest. The history floor is therefore set by the newest fund, about 9 to 10 months back today. The two-year example in the first draft is possible only for the five older funds, so UJ-1 now asks for the earliest available start month.
+2. **Does the stored history fit the 5 MB target?** Yes, by a wide margin. The seven series total 6,587 points, roughly 165 KB as JSON at about 25 bytes per point. This is an estimate from the point count, not a measured size.
 
-- §4.1 FR-1: a backtest needs at least 12 months of history to be shown.
+## 9. Decided Assumptions Index
+
+- §4.1 FR-1: a backtest needs at least 6 months of history to be shown.
 - §4.1 FR-2: deposits are invested at the month's first available NAV, and holdings are valued at its last available NAV.
 - §4.1 FR-4: a fund's units are valued at its last known NAV, carried forward across its gaps.
 - §4.1 FR-4: a month with no NAV for any fund holds the deposit as cash at zero growth and is marked.
-- §4.1 NFRs: the 5 MB and 2-second bounds are working targets.
+- §4.1 NFRs: the 5 MB and 2-second targets stand.
 - §5: the simulation is gross of fees and taxes.
