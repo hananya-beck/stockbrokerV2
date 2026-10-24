@@ -135,7 +135,7 @@ So that the page never reads one file from a new run and the other from an old r
 **Then** each file goes to a temp file in `data/` and is moved into place with `os.replace`, `nav-history.json` first and `funds.json` last (AD-4)
 **And** `.github/workflows/update-data.yml` stages both `data/funds.json` and `data/nav-history.json`, runs `git pull --rebase` before `git push`, and fails the run when the push fails (AD-3, FR7)
 **And** `.claude/skills/add-fund/SKILL.md` runs `scripts/fetch_data.py` and stages both files, never `funds.json` alone (AD-3)
-**And** a commit that changes `funds.json` also changes `nav-history.json`, checked by reading the workflow and the skill (AD-3)
+**And** a test in `tests/test_fetch_data.py` reads the workflow and the skill and asserts that each stages `data/funds.json` and `data/nav-history.json` together, with no network (AD-3)
 
 ## Epic 2: Backtest the suggested allocation
 
@@ -206,6 +206,8 @@ So that I only run backtests the data supports, and I see why when I can't.
 **And** when the run is not runnable, the run control is disabled and the reason shows next to it in the selected language (FR1, NFR2)
 **And** when `nav-history.json` fails to load or parse, the error shows next to the run control, the run is disabled, and no partial data is rendered (AD-6)
 **And** the page writes nothing to `localStorage`, `sessionStorage`, IndexedDB or cookies (AD-7, NFR4)
+**And** when a fund's history is stale, its name shows a stale label next to the refresh control, with the date of its last point, in the selected language (FR7, AD-2)
+**And** the page takes the stale flag from `nav-history.json` and never derives it from dates (AD-2)
 **And** every new string exists in both `STRINGS.he` and `STRINGS.en` (NFR2)
 
 ### Story 2.5: Show the comparison chart
