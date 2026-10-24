@@ -1,5 +1,7 @@
+import json
 import math
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
@@ -9,6 +11,9 @@ from fetch_data import (  # noqa: E402
     annualized_return,
     annualized_volatility,
     compute_metrics,
+    fetch_fund_series,
+    nav_history_payload,
+    nav_points,
     trailing_return,
 )
 
@@ -103,3 +108,133 @@ def test_floor_capped_for_many_funds():
     allocate_weights(funds)
     assert all(f["suggested_weight"] >= 0 for f in funds)
     assert math.isclose(sum(f["suggested_weight"] for f in funds), 1.0, abs_tol=1e-6)
+
+
+class _Response:
+    def __init__(self, body):
+        self._body = body
+
+    def read(self):
+        return self._body
+
+
+class _FakeOpener:
+    def __init__(self, body):
+        self._body = body
+
+    def open(self, req, timeout=None):
+        return _Response(self._body)
+
+
+PRICE_BODY = (
+    b'~[{"D_p":"02/01/2026","C_p":"1.5"},'
+    b'{"D_p":"03/01/2026","C_p":null},'
+    b'{"D_p":"01/01/2026","C_p":"1.0"}]'
+)
+
+
+def test_fetch_series_has_iso_dates_sorted_ascending_and_skips_null_close():
+    series = fetch_fund_series(_FakeOpener(PRICE_BODY), "123")
+    assert [p["date"] for p in series] == ["2026-01-01", "2026-01-02"]
+    assert [p["close"] for p in series] == [1.0, 1.5]
+
+
+def test_last_date_is_iso():
+    series = fetch_fund_series(_FakeOpener(PRICE_BODY), "123")
+    assert compute_metrics(series)["last_date"] == "2026-01-02"
+
+
+def test_nav_points_drop_zero_negative_and_non_finite_closes():
+    series = [
+        {"date": "2026-01-01", "close": 1.0},
+        {"date": "2026-01-02", "close": 0.0},
+        {"date": "2026-01-03", "close": -2.0},
+        {"date": "2026-01-04", "close": float("nan")},
+        {"date": "2026-01-05", "close": float("inf")},
+        {"date": "2026-01-06", "close": 2.0},
+    ]
+    assert nav_points(series) == [["2026-01-01", 1.0], ["2026-01-06", 2.0]]
+
+
+def test_nav_history_payload_serializes_as_strict_json():
+    series = [
+        {"date": "2026-01-01", "close": 1.0},
+        {"date": "2026-01-02", "close": float("nan")},
+    ]
+    payload = nav_history_payload({"123": series}, "2026-01-07T00:00:00+00:00")
+    text = json.dumps(payload, allow_nan=False)
+    assert json.loads(text)["funds"]["123"] == {
+        "stale": False,
+        "points": [["2026-01-01", 1.0]],
+    }
+
+
+def test_failed_fund_is_absent_from_history_and_run_continues(tmp_path, monkeypatch):
+    import fetch_data
+
+    config = tmp_path / "funds_config.json"
+    config.write_text(
+        json.dumps({"funds": [{"id": "1"}, {"id": "2"}]}), encoding="utf-8"
+    )
+    monkeypatch.setattr(fetch_data, "FUNDS_CONFIG", config)
+    monkeypatch.setattr(fetch_data, "OUTPUT", tmp_path / "funds.json")
+    monkeypatch.setattr(fetch_data, "NAV_HISTORY", tmp_path / "nav-history.json")
+    monkeypatch.setattr(fetch_data, "build_opener", lambda: None)
+
+    series = [
+        {"date": "2026-01-01", "close": 1.0},
+        {"date": "2026-01-02", "close": 1.1},
+    ]
+
+    def fake_fetch(opener, fund_id):
+        if fund_id == "2":
+            raise RuntimeError("source unavailable")
+        return series
+
+    monkeypatch.setattr(fetch_data, "fetch_fund_series", fake_fetch)
+    fetch_data.main()
+
+    history = json.loads((tmp_path / "nav-history.json").read_text(encoding="utf-8"))
+    assert list(history["funds"]) == ["1"]
+    assert history["funds"]["1"]["points"] == [["2026-01-01", 1.0], ["2026-01-02", 1.1]]
+    assert (tmp_path / "funds.json").exists()
+
+
+def test_all_fetches_failing_keeps_last_good_history(tmp_path, monkeypatch):
+    import fetch_data
+
+    config = tmp_path / "funds_config.json"
+    config.write_text(json.dumps({"funds": [{"id": "1"}]}), encoding="utf-8")
+    output = tmp_path / "funds.json"
+    output.write_text(
+        json.dumps({"funds": [{"id": "1", "metrics": {"risk_adjusted_score": None}}]}),
+        encoding="utf-8",
+    )
+    history = tmp_path / "nav-history.json"
+    history.write_text('{"sentinel": true}', encoding="utf-8")
+    monkeypatch.setattr(fetch_data, "FUNDS_CONFIG", config)
+    monkeypatch.setattr(fetch_data, "OUTPUT", output)
+    monkeypatch.setattr(fetch_data, "NAV_HISTORY", history)
+    monkeypatch.setattr(fetch_data, "build_opener", lambda: None)
+
+    def failing_fetch(opener, fund_id):
+        raise RuntimeError("source unavailable")
+
+    monkeypatch.setattr(fetch_data, "fetch_fund_series", failing_fetch)
+    fetch_data.main()
+
+    assert history.read_text(encoding="utf-8") == '{"sentinel": true}'
+
+
+def test_seven_funds_full_history_is_under_5_mb():
+    start = date(2021, 1, 1)
+    series_by_id = {
+        str(fund): [
+            {"date": (start + timedelta(days=i)).isoformat(), "close": 100.0 + i}
+            for i in range(1260)
+        ]
+        for fund in range(7)
+    }
+    payload = nav_history_payload(series_by_id, "2026-10-25T00:00:00+00:00")
+    size = len(json.dumps(payload, indent=2, allow_nan=False).encode("utf-8"))
+    assert size < 5_000_000

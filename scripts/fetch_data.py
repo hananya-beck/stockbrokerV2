@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 FUNDS_CONFIG = ROOT / "data" / "funds_config.json"
 OUTPUT = ROOT / "data" / "funds.json"
+NAV_HISTORY = ROOT / "data" / "nav-history.json"
 
 USER_AGENT = "Mozilla/5.0 (compatible; stockbroker-fetch/1.0)"
 BASE = "https://www.bizportal.co.il"
@@ -85,12 +86,34 @@ def fetch_fund_series(opener, fund_id):
     points = json.loads(raw)
     # Points come back newest-first; sort ascending by date for return calculations.
     series = [
-        {"date": p["D_p"], "close": float(p["C_p"])}
+        {
+            "date": datetime.strptime(p["D_p"], "%d/%m/%Y").date().isoformat(),
+            "close": float(p["C_p"]),
+        }
         for p in points
         if p.get("C_p") is not None
     ]
-    series.sort(key=lambda p: datetime.strptime(p["date"], "%d/%m/%Y"))
+    # ISO dates sort lexically, so this orders the series by date.
+    series.sort(key=lambda p: p["date"])
     return series
+
+
+def nav_points(series):
+    return [
+        [p["date"], p["close"]]
+        for p in series
+        if math.isfinite(p["close"]) and p["close"] > 0
+    ]
+
+
+def nav_history_payload(series_by_id, generated_at):
+    return {
+        "generated_at": generated_at,
+        "funds": {
+            fund_id: {"stale": False, "points": nav_points(series)}
+            for fund_id, series in series_by_id.items()
+        },
+    }
 
 
 def trailing_return(series, days):
@@ -232,6 +255,7 @@ def main():
 
     funds = []
     failures = []
+    series_by_id = {}
     for entry in config["funds"]:
         try:
             series = fetch_fund_series(opener, entry["id"])
@@ -239,6 +263,7 @@ def main():
                 raise ValueError("empty price series")
             metrics = compute_metrics(series, risk_free_rate)
             funds.append({**entry, "metrics": metrics, "stale": False})
+            series_by_id[entry["id"]] = series
         except Exception as exc:  # noqa: BLE001 - one bad fund shouldn't stop the run
             failures.append(entry["id"])
             print(f"Failed to fetch fund {entry['id']}: {exc}", file=sys.stderr)
@@ -262,6 +287,14 @@ def main():
         json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print(f"Wrote {OUTPUT} with {len(funds)} funds")
+    if series_by_id:
+        # Keep the last good history when every fetch failed.
+        history = nav_history_payload(series_by_id, output["generated_at"])
+        NAV_HISTORY.write_text(
+            json.dumps(history, ensure_ascii=False, indent=2, allow_nan=False),
+            encoding="utf-8",
+        )
+        print(f"Wrote {NAV_HISTORY} with {len(series_by_id)} funds")
     if failures:
         print(f"Warning: {len(failures)} fund(s) failed: {', '.join(failures)}", file=sys.stderr)
 
