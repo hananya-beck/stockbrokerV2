@@ -11,7 +11,7 @@ import sys
 import statistics
 import time
 import urllib.request
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from http.cookiejar import CookieJar
 from pathlib import Path
 
@@ -106,14 +106,65 @@ def nav_points(series):
     ]
 
 
-def nav_history_payload(series_by_id, generated_at):
-    return {
-        "generated_at": generated_at,
-        "funds": {
-            fund_id: {"stale": False, "points": nav_points(series)}
-            for fund_id, series in series_by_id.items()
-        },
+def merge_points(previous, fetched):
+    by_date = {**dict(previous), **dict(fetched)}
+    return [[date, close] for date, close in sorted(by_date.items())]
+
+
+def _is_iso_date(value):
+    try:
+        return isinstance(value, str) and date.fromisoformat(value).isoformat() == value
+    except ValueError:
+        return False
+
+
+def _is_point(point):
+    return (
+        isinstance(point, list)
+        and len(point) == 2
+        and _is_iso_date(point[0])
+        and isinstance(point[1], (int, float))
+        and not isinstance(point[1], bool)
+        and math.isfinite(point[1])
+        and point[1] > 0
+    )
+
+
+def _is_history_entry(entry):
+    return (
+        isinstance(entry, dict)
+        and isinstance(entry.get("stale"), bool)
+        and isinstance(entry.get("points"), list)
+        and all(_is_point(p) for p in entry["points"])
+    )
+
+
+def read_previous_history(path):
+    """Stored `{fund_id: {"stale", "points"}}`; `{}` when no file exists yet."""
+    if not path.exists():
+        return {}
+    try:
+        funds = json.loads(path.read_text(encoding="utf-8"))["funds"]
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        sys.exit(f"Cannot read previous history {path}: {exc}")
+    if not isinstance(funds, dict) or not all(map(_is_history_entry, funds.values())):
+        sys.exit(f"Previous history {path} has an unexpected shape")
+    return funds
+
+
+def nav_history_payload(series_by_id, generated_at, previous=None):
+    previous = previous or {}
+    merged = {
+        fund_id: {
+            "stale": False,
+            "points": merge_points(
+                previous.get(fund_id, {}).get("points", []), nav_points(series)
+            ),
+        }
+        for fund_id, series in series_by_id.items()
     }
+    carried = {k: v for k, v in previous.items() if k not in series_by_id}
+    return {"generated_at": generated_at, "funds": {**merged, **carried}}
 
 
 def trailing_return(series, days):
@@ -242,6 +293,12 @@ def allocate_weights(funds):
 def main():
     config = json.loads(FUNDS_CONFIG.read_text(encoding="utf-8"))
     risk_free_rate = config.get("risk_free_rate", DEFAULT_RISK_FREE_RATE)
+    configured_ids = {entry["id"] for entry in config["funds"]}
+    stored_history = {
+        fund_id: entry
+        for fund_id, entry in read_previous_history(NAV_HISTORY).items()
+        if fund_id in configured_ids
+    }
     opener = build_opener()
 
     # Previous output, used as a fallback for any fund whose fetch fails.
@@ -289,7 +346,9 @@ def main():
     print(f"Wrote {OUTPUT} with {len(funds)} funds")
     if series_by_id:
         # Keep the last good history when every fetch failed.
-        history = nav_history_payload(series_by_id, output["generated_at"])
+        history = nav_history_payload(
+            series_by_id, output["generated_at"], stored_history
+        )
         NAV_HISTORY.write_text(
             json.dumps(history, ensure_ascii=False, indent=2, allow_nan=False),
             encoding="utf-8",

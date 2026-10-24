@@ -4,6 +4,8 @@ import sys
 from datetime import date, timedelta
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 from fetch_data import (  # noqa: E402
@@ -12,8 +14,10 @@ from fetch_data import (  # noqa: E402
     annualized_volatility,
     compute_metrics,
     fetch_fund_series,
+    merge_points,
     nav_history_payload,
     nav_points,
+    read_previous_history,
     trailing_return,
 )
 
@@ -211,7 +215,7 @@ def test_all_fetches_failing_keeps_last_good_history(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     history = tmp_path / "nav-history.json"
-    history.write_text('{"sentinel": true}', encoding="utf-8")
+    history.write_text('{"funds": {}, "sentinel": true}', encoding="utf-8")
     monkeypatch.setattr(fetch_data, "FUNDS_CONFIG", config)
     monkeypatch.setattr(fetch_data, "OUTPUT", output)
     monkeypatch.setattr(fetch_data, "NAV_HISTORY", history)
@@ -223,7 +227,7 @@ def test_all_fetches_failing_keeps_last_good_history(tmp_path, monkeypatch):
     monkeypatch.setattr(fetch_data, "fetch_fund_series", failing_fetch)
     fetch_data.main()
 
-    assert history.read_text(encoding="utf-8") == '{"sentinel": true}'
+    assert history.read_text(encoding="utf-8") == '{"funds": {}, "sentinel": true}'
 
 
 def test_seven_funds_full_history_is_under_5_mb():
@@ -271,3 +275,155 @@ def test_main_writes_strict_history_under_5_mb_and_iso_last_date(tmp_path, monke
     last_day = (start + timedelta(days=1259)).isoformat()
     funds = json.loads((tmp_path / "funds.json").read_text(encoding="utf-8"))["funds"]
     assert all(fund["metrics"]["last_date"] == last_day for fund in funds)
+
+
+def _pts(*pairs):
+    return [[f"2026-01-0{d}", c] for d, c in pairs]
+
+
+def _entry(points, stale=False):
+    return {"stale": stale, "points": points}
+
+
+def test_merge_keeps_older_dates_and_sorts_ascending():
+    previous = _pts((1, 1.0), (2, 1.1), (3, 1.2), (4, 1.3), (5, 1.4))
+    fetched = _pts((6, 1.6), (4, 1.3), (5, 1.4))
+    assert merge_points(previous, fetched) == _pts(
+        (1, 1.0), (2, 1.1), (3, 1.2), (4, 1.3), (5, 1.4), (6, 1.6)
+    )
+
+
+def test_merge_prefers_this_runs_close_on_shared_date():
+    assert merge_points(_pts((1, 1.0), (2, 1.1)), _pts((2, 9.9))) == _pts((1, 1.0), (2, 9.9))
+
+
+def test_payload_merges_fetched_fund_and_marks_it_fresh():
+    previous = {"1": _entry(_pts((1, 1.0), (2, 1.1)), stale=True)}
+    series = [{"date": "2026-01-02", "close": 2.0}, {"date": "2026-01-03", "close": 3.0}]
+    payload = nav_history_payload({"1": series}, "t", previous)
+    assert payload["funds"]["1"] == _entry(_pts((1, 1.0), (2, 2.0), (3, 3.0)))
+
+
+def test_payload_with_no_previous_holds_fetched_series_alone():
+    series = [{"date": "2026-01-01", "close": 1.0}]
+    payload = nav_history_payload({"1": series}, "t")
+    assert payload["funds"] == {"1": _entry(_pts((1, 1.0)))}
+
+
+def test_read_previous_history_absent_file_is_empty(tmp_path):
+    assert read_previous_history(tmp_path / "missing.json") == {}
+
+
+def test_read_previous_history_returns_stored_entries(tmp_path):
+    path = tmp_path / "nav-history.json"
+    entries = {"1": _entry(_pts((1, 1.0)), stale=True)}
+    path.write_text(json.dumps({"funds": entries}), encoding="utf-8")
+    assert read_previous_history(path) == entries
+
+
+def _write_unreadable(tmp_path, monkeypatch, content, fetch_calls):
+    import fetch_data
+
+    config = tmp_path / "funds_config.json"
+    config.write_text(json.dumps({"funds": [{"id": "1"}]}), encoding="utf-8")
+    history = tmp_path / "nav-history.json"
+    history.write_text(content, encoding="utf-8")
+    monkeypatch.setattr(fetch_data, "FUNDS_CONFIG", config)
+    monkeypatch.setattr(fetch_data, "OUTPUT", tmp_path / "funds.json")
+    monkeypatch.setattr(fetch_data, "NAV_HISTORY", history)
+    monkeypatch.setattr(fetch_data, "build_opener", lambda: None)
+    monkeypatch.setattr(
+        fetch_data,
+        "fetch_fund_series",
+        lambda opener, fund_id: fetch_calls.append(fund_id) or [],
+    )
+
+
+def _stored(point=None, **entry):
+    body = {"stale": False, "points": [point or ["2026-01-01", 1.0]], **entry}
+    return json.dumps({"funds": {"1": body}})
+
+
+UNREADABLE_HISTORY = {
+    "invalid-json": "not json",
+    "no-funds-key": "{}",
+    "top-level-list": "[]",
+    "funds-is-list": '{"funds": []}',
+    "string-close": _stored(["2026-01-01", "x"]),
+    "nan-close": '{"funds": {"1": {"stale": false, "points": [["2026-01-01", NaN]]}}}',
+    "missing-stale": '{"funds": {"1": {"points": []}}}',
+    "three-element-point": _stored(["2026-01-01", 1.0, 2.0]),
+    "non-string-date": _stored([20260101, 1.0]),
+    "non-iso-date": _stored(["2026-1-5", 1.0]),
+    "garbage-date": _stored(["x", 1.0]),
+    "boolean-close": '{"funds": {"1": {"stale": false, "points": [["2026-01-01", true]]}}}',
+    "zero-close": _stored(["2026-01-01", 0]),
+    "negative-close": _stored(["2026-01-01", -1.0]),
+    "infinity-close": '{"funds": {"1": {"stale": false, "points": [["2026-01-01", Infinity]]}}}',
+    "non-boolean-stale": _stored(stale="no"),
+    "non-list-points": '{"funds": {"1": {"stale": false, "points": {}}}}',
+    "non-object-entry": '{"funds": {"1": []}}',
+}
+
+
+@pytest.mark.parametrize("content", UNREADABLE_HISTORY.values(), ids=UNREADABLE_HISTORY.keys())
+def test_unreadable_previous_history_exits_before_any_write(tmp_path, monkeypatch, content):
+    import fetch_data
+
+    calls = []
+    _write_unreadable(tmp_path, monkeypatch, content, calls)
+    with pytest.raises(SystemExit) as exc:
+        fetch_data.main()
+    assert "nav-history.json" in str(exc.value)
+    assert calls == []
+    assert not (tmp_path / "funds.json").exists()
+    assert (tmp_path / "nav-history.json").read_text(encoding="utf-8") == content
+
+
+def _run_main(tmp_path, monkeypatch, config_ids, fetch):
+    import fetch_data
+
+    config = tmp_path / "funds_config.json"
+    config.write_text(
+        json.dumps({"funds": [{"id": i} for i in config_ids]}), encoding="utf-8"
+    )
+    monkeypatch.setattr(fetch_data, "FUNDS_CONFIG", config)
+    monkeypatch.setattr(fetch_data, "OUTPUT", tmp_path / "funds.json")
+    monkeypatch.setattr(fetch_data, "NAV_HISTORY", tmp_path / "nav-history.json")
+    monkeypatch.setattr(fetch_data, "build_opener", lambda: None)
+    monkeypatch.setattr(fetch_data, "fetch_fund_series", fetch)
+    fetch_data.main()
+    return json.loads((tmp_path / "nav-history.json").read_text(encoding="utf-8"))
+
+
+def _series(pairs):
+    return [{"date": f"2026-01-0{d}", "close": c} for d, c in pairs]
+
+
+def test_two_runs_keep_every_date_from_the_first(tmp_path, monkeypatch):
+    first = _series([(1, 1.0), (2, 1.1), (3, 1.2)])
+    second = _series([(3, 1.25), (4, 1.3)])
+    _run_main(tmp_path, monkeypatch, ["1"], lambda o, i: first)
+    history = _run_main(tmp_path, monkeypatch, ["1"], lambda o, i: second)
+    assert history["funds"]["1"]["points"] == _pts((1, 1.0), (2, 1.1), (3, 1.25), (4, 1.3))
+
+
+def test_failed_fund_keeps_stored_entry_and_removed_fund_is_dropped(tmp_path, monkeypatch):
+    stored = {
+        "1": _entry(_pts((1, 1.0), (2, 1.1)), stale=True),
+        "2": _entry(_pts((1, 5.0))),
+        "gone": _entry(_pts((1, 7.0))),
+    }
+    (tmp_path / "nav-history.json").write_text(
+        json.dumps({"generated_at": "t", "funds": stored}), encoding="utf-8"
+    )
+
+    def fetch(opener, fund_id):
+        if fund_id == "1":
+            raise RuntimeError("source unavailable")
+        return _series([(2, 5.5)])
+
+    history = _run_main(tmp_path, monkeypatch, ["1", "2"], fetch)
+    assert history["funds"]["1"] == stored["1"]
+    assert history["funds"]["2"] == _entry(_pts((1, 5.0), (2, 5.5)))
+    assert "gone" not in history["funds"]
