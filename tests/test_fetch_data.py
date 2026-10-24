@@ -238,3 +238,36 @@ def test_seven_funds_full_history_is_under_5_mb():
     payload = nav_history_payload(series_by_id, "2026-10-25T00:00:00+00:00")
     size = len(json.dumps(payload, indent=2, allow_nan=False).encode("utf-8"))
     assert size < 5_000_000
+
+
+def _reject_constant(name):
+    raise ValueError(f"non-finite constant {name} in output")
+
+
+def test_main_writes_strict_history_under_5_mb_and_iso_last_date(tmp_path, monkeypatch):
+    import fetch_data
+
+    config = tmp_path / "funds_config.json"
+    config.write_text(
+        json.dumps({"funds": [{"id": str(fund)} for fund in range(7)]}), encoding="utf-8"
+    )
+    monkeypatch.setattr(fetch_data, "FUNDS_CONFIG", config)
+    monkeypatch.setattr(fetch_data, "OUTPUT", tmp_path / "funds.json")
+    monkeypatch.setattr(fetch_data, "NAV_HISTORY", tmp_path / "nav-history.json")
+    monkeypatch.setattr(fetch_data, "build_opener", lambda: None)
+
+    start = date(2021, 1, 1)
+    series = [
+        {"date": (start + timedelta(days=i)).isoformat(), "close": 100.0 + i}
+        for i in range(1260)
+    ]
+    monkeypatch.setattr(fetch_data, "fetch_fund_series", lambda opener, fund_id: series)
+    fetch_data.main()
+
+    history_path = tmp_path / "nav-history.json"
+    assert history_path.stat().st_size < 5_000_000
+    json.loads(history_path.read_text(encoding="utf-8"), parse_constant=_reject_constant)
+
+    last_day = (start + timedelta(days=1259)).isoformat()
+    funds = json.loads((tmp_path / "funds.json").read_text(encoding="utf-8"))["funds"]
+    assert all(fund["metrics"]["last_date"] == last_day for fund in funds)

@@ -101,3 +101,31 @@ Reviewers: blind hunter (B), edge-case hunter (E), verification-gap (V). Each fi
 **Manual checks (decided: option A):**
 - Run `python scripts/fetch_data.py` locally. `data/nav-history.json` exists and parses as strict JSON.
 - Serve the site with `python -m http.server`. The page still loads and shows the same funds and figures.
+
+### Review Findings
+
+- [x] [Review][Patch] Main-level tests do not check the bytes `main` writes: the 5 MB bound and strict-JSON check run on a re-implementation, and no test checks that `funds.json` `last_date` is ISO [tests/test_fetch_data.py:328] — applied: `test_main_writes_strict_history_under_5_mb_and_iso_last_date`
+- [x] [Review][Defer] When every fetch fails and a previous `funds.json` exists, the stale fallback keeps `funds` non-empty, so `funds.json` is rewritten with all-stale entries [scripts/fetch_data.py:270] — deferred: pre-existing; the all-fail abort is Story 1.3 by the Never list.
+- [x] [Review][Defer] The stale path keeps a day-first `last_date` [scripts/fetch_data.py:270] — deferred: already recorded as V2; Story 1.3.
+- [x] [Review][Defer] The workflow stages only `funds.json` [.github/workflows/update-data.yml:29] — deferred: already recorded as B4/V3; Story 1.4.
+- [x] [Review][Defer] `funds.json` is written before `nav-history.json` [scripts/fetch_data.py:286] — deferred: already recorded as B7b; Story 1.4.
+- [x] [Review][Defer] Duplicate fund ids overwrite each other in history [data/funds_config.json] — deferred: already recorded as E7; predates this change.
+- [x] [Review][Defer] The metrics path does not filter non-numeric closes, so `NaN` could reach `funds.json` [scripts/fetch_data.py:91] — deferred: already recorded as O1, maybe-false; settle with a bizportal response containing a non-numeric `C_p`.
+- [x] [Review][Defer] A malformed point (non-numeric `C_p` such as an empty string, or a missing or unparseable `D_p`) fails the whole fund [scripts/fetch_data.py:90] — deferred: maybe-false; settle with the same bizportal check as O1.
+- [x] [Review][Defer] `AGENTS.md` and `.claude/rules/fetch-script.md` do not mention `data/nav-history.json` [AGENTS.md] — deferred: documentation edits to agent-context files.
+
+**Rejected:**
+- `false`: `nav_points` can receive a `None` close. Upstream, `fetch_fund_series` drops `None` at `scripts/fetch_data.py:94`.
+- `false`: the all-fail history-guard comment is wrong. The guard runs only when no fund succeeded, which is the all-fail case.
+- `false`: `nav_points` does not sort or convert dates, as the Execution task text says. The acceptance criterion holds end to end, so this is a cosmetic wording mismatch.
+- `false`: `generated_at` is a full timestamp, not a date. It is an AD-2 field, and the `YYYY-MM-DD` rule covers date fields.
+- `reject`: `"stale": false` is always false. The field is part of the AD-2 shape (`ARCHITECTURE-SPINE.md:42`) and is set only once Story 1.3 lands.
+- `reject`: failed-fund history is lost on overwrite. The frozen Never list excludes it until Story 1.3, the same as B2.
+- `reject`: duplicate source dates would double-count. Same as B6; the source returns unique dates.
+- `reject`: a fund whose closes are all dropped gets `points: []`. Same as E4.
+- `reject`: the manual browser render was not checked. This is a process gap, not a code defect: `index.html` is untouched and does not read `last_date`. It stays open for the author to run.
+- `reject`: the Code Map describes day-first dates. Fixing it would edit the spec under review.
+- `reject`: the committed `data/funds.json` has day-first `last_date` values. The next scheduled run regenerates it, and the only fix is a hand-edit that `AGENTS.md` forbids.
+- `reject`: triage IDs `B7` and `B7b` are easy to conflate. Cosmetic.
+
+**Status sync:** the spec frontmatter says `done` and `sprint-status.yaml` says `review`. Step 6 of the review sets both to the new status.

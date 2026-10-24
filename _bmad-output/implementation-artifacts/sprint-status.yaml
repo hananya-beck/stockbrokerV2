@@ -29,14 +29,14 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-25-2026 00:34
-last_updated: 10-25-2026 01:02
+last_updated: 10-25-2026 01:22
 project: stockbrokerV2
 project_key: NOKEY
 tracking_system: file-system
 story_location: _bmad-output/implementation-artifacts
 development_status:
   epic-1: in-progress
-  1-1-store-each-fund-s-daily-nav-series: review
+  1-1-store-each-fund-s-daily-nav-series: done
   1-2-merge-each-run-into-the-stored-history: backlog
   1-3-keep-the-last-good-data-when-a-fetch-fails: backlog
   1-4-commit-the-history-and-fund-list-together-atomically: backlog
