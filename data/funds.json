@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-24T09:20:15.361123+00:00",
+  "generated_at": "2026-10-25T09:37:09.931551+00:00",
   "funds": [
     {
       "id": "5109889",
@@ -20,7 +20,7 @@
         "volatility_blended": 0.17570894699864803,
         "history_days": 1229,
         "last_price": 449.25,
-        "last_date": "22/10/2026"
+        "last_date": "2026-10-22"
       },
       "stale": false,
       "suggested_weight": 0.196
@@ -44,7 +44,7 @@
         "volatility_blended": 0.22400644403589123,
         "history_days": 1229,
         "last_price": 296.71,
-        "last_date": "22/10/2026"
+        "last_date": "2026-10-22"
       },
       "stale": false,
       "suggested_weight": 0.1897
@@ -68,7 +68,7 @@
         "volatility_blended": 0.2870263700198599,
         "history_days": 1230,
         "last_price": 1750.0,
-        "last_date": "23/10/2026"
+        "last_date": "2026-10-23"
       },
       "stale": false,
       "suggested_weight": 0.1734
@@ -92,7 +92,7 @@
         "volatility_blended": 0.22192383863377585,
         "history_days": 1229,
         "last_price": 218.92,
-        "last_date": "22/10/2026"
+        "last_date": "2026-10-22"
       },
       "stale": false,
       "suggested_weight": 0.1547
@@ -116,7 +116,7 @@
         "volatility_blended": 0.1530428601940578,
         "history_days": 1230,
         "last_price": 517900.0,
-        "last_date": "23/10/2026"
+        "last_date": "2026-10-23"
       },
       "stale": false,
       "suggested_weight": 0.1411
@@ -140,7 +140,7 @@
         "volatility_blended": null,
         "history_days": 240,
         "last_price": 117.11,
-        "last_date": "22/10/2026"
+        "last_date": "2026-10-22"
       },
       "stale": false,
       "suggested_weight": 0.1
@@ -164,7 +164,7 @@
         "volatility_blended": null,
         "history_days": 200,
         "last_price": 86.7,
-        "last_date": "22/10/2026"
+        "last_date": "2026-10-22"
       },
       "stale": false,
       "suggested_weight": 0.0451
