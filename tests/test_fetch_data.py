@@ -730,3 +730,19 @@ def test_workflow_pulls_with_rebase_before_a_push_that_is_not_swallowed():
     assert "git pull --rebase" in text
     assert text.index("git pull --rebase") < text.index("git push")
     assert all("||" not in line for line in _lines_naming(".github/workflows/update-data.yml", "git push"))
+
+
+def test_workflow_serialises_runs_and_fetches_before_it_commits():
+    lines = (REPO / ".github/workflows/update-data.yml").read_text(encoding="utf-8").splitlines()
+    assert "concurrency:" in lines
+    assert "  group: update-data" in lines
+    assert "  cancel-in-progress: false" in lines
+    fetch = next(i for i, line in enumerate(lines) if "scripts/fetch_data.py" in line)
+    stage = next(i for i, line in enumerate(lines) if "git add data/" in line)
+    assert fetch < stage
+
+
+def test_commit_step_never_swallows_a_failure():
+    text = (REPO / ".github/workflows/update-data.yml").read_text(encoding="utf-8")
+    assert "continue-on-error" not in text
+    assert "set +e" not in text
