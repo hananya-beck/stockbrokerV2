@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-25-2026 00:34
-last_updated: 10-25-2026 01:59
+last_updated: 10-25-2026 02:12
 project: stockbrokerV2
 project_key: NOKEY
 tracking_system: file-system
@@ -56,14 +56,14 @@ action_items:
       feed the same series to history, and set series_by_id before metrics run (F2,
       F3)"
     owner: "Hananya"
-    status: open
+    status: done
     ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
   - id: "epic-1-retro-item-2-write-funds-json-with-allow_nan-false-an"
     epic: 1
     action: "Write funds.json with allow_nan=False and add a main-level test that
       parses funds.json strictly (F1)"
     owner: "Hananya"
-    status: open
+    status: done
     ref: "C:/Users/Hananya/.local/bin/stockbrokerV2/_bmad-output/implementation-artifacts/epic-1-retro-2026-10-25.md"
   - id: "epic-1-retro-item-3-add-a-top-level-concurrency-group-update"
     epic: 1
