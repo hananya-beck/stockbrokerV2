@@ -99,12 +99,12 @@ def fetch_fund_series(opener, fund_id):
     return series
 
 
+def clean_series(series):
+    return [p for p in series if math.isfinite(p["close"]) and p["close"] > 0]
+
+
 def nav_points(series):
-    return [
-        [p["date"], p["close"]]
-        for p in series
-        if math.isfinite(p["close"]) and p["close"] > 0
-    ]
+    return [[p["date"], p["close"]] for p in clean_series(series)]
 
 
 def merge_points(previous, fetched):
@@ -379,7 +379,7 @@ def main():
     series_by_id = {}
     for entry in config["funds"]:
         try:
-            series = fetch_fund_series(opener, entry["id"])
+            series = clean_series(fetch_fund_series(opener, entry["id"]))
             if not series:
                 raise ValueError("empty price series")
             metrics = compute_metrics(series, risk_free_rate)
@@ -413,7 +413,7 @@ def main():
         series_by_id, output["generated_at"], stored_history, failures
     )
     history_text = json.dumps(history, ensure_ascii=False, indent=2, allow_nan=False)
-    output_text = json.dumps(output, ensure_ascii=False, indent=2)
+    output_text = json.dumps(output, ensure_ascii=False, indent=2, allow_nan=False)
     write_files_atomically([(NAV_HISTORY, history_text), (OUTPUT, output_text)])
     print(f"Wrote {NAV_HISTORY} with {len(history['funds'])} funds")
     print(f"Wrote {OUTPUT} with {len(funds)} funds")

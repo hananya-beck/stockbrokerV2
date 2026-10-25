@@ -222,6 +222,41 @@ def test_main_writes_strict_history_under_5_mb_and_iso_last_date(tmp_path, monke
     assert all(fund["metrics"]["last_date"] == last_day for fund in funds)
 
 
+def test_main_drops_bad_closes_before_metrics_and_writes_strict_funds_json(tmp_path, monkeypatch):
+    import fetch_data
+
+    start = date(2021, 1, 1)
+    days = [(start + timedelta(days=i)).isoformat() for i in range(1300)]
+    negative_tail = [{"date": day, "close": 100.0 + i} for i, day in enumerate(days)]
+    negative_tail[-1]["close"] = -5.0
+    with_nan = [{"date": day, "close": 100.0 + i} for i, day in enumerate(days)]
+    with_nan[600]["close"] = float("nan")
+    series_by_id = {"1": negative_tail, "2": with_nan}
+
+    config = tmp_path / "funds_config.json"
+    config.write_text(json.dumps({"funds": [{"id": "1"}, {"id": "2"}]}), encoding="utf-8")
+    monkeypatch.setattr(fetch_data, "FUNDS_CONFIG", config)
+    monkeypatch.setattr(fetch_data, "OUTPUT", tmp_path / "funds.json")
+    monkeypatch.setattr(fetch_data, "NAV_HISTORY", tmp_path / "nav-history.json")
+    monkeypatch.setattr(fetch_data, "build_opener", lambda: None)
+    monkeypatch.setattr(
+        fetch_data, "fetch_fund_series", lambda opener, fund_id: series_by_id[fund_id]
+    )
+    fetch_data.main()
+
+    funds = json.loads(
+        (tmp_path / "funds.json").read_text(encoding="utf-8"), parse_constant=_reject_constant
+    )["funds"]
+    assert all(fund["stale"] is False for fund in funds)
+
+    history = json.loads(
+        (tmp_path / "nav-history.json").read_text(encoding="utf-8"),
+        parse_constant=_reject_constant,
+    )["funds"]
+    assert days[-1] not in [point[0] for point in history["1"]["points"]]
+    assert days[600] not in [point[0] for point in history["2"]["points"]]
+
+
 def _pts(*pairs):
     return [[f"2026-01-0{d}", c] for d, c in pairs]
 
