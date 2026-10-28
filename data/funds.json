@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-27T10:15:13.430756+00:00",
+  "generated_at": "2026-10-28T11:04:21.413863+00:00",
   "funds": [
     {
       "id": "5109889",
@@ -18,7 +18,7 @@
         "score_basis": "long_horizons",
         "risk_adjusted_score": 1.32582986757207,
         "volatility_blended": 0.17613839806078077,
-        "history_days": 1229,
+        "history_days": 1228,
         "last_price": 453.68,
         "last_date": "2026-10-26"
       },
@@ -42,7 +42,7 @@
         "score_basis": "long_horizons",
         "risk_adjusted_score": 1.1956507753166477,
         "volatility_blended": 0.22413120770872305,
-        "history_days": 1229,
+        "history_days": 1228,
         "last_price": 297.38,
         "last_date": "2026-10-26"
       },
@@ -66,7 +66,7 @@
         "score_basis": "long_horizons",
         "risk_adjusted_score": 1.0421953472134249,
         "volatility_blended": 0.28704898315645416,
-        "history_days": 1229,
+        "history_days": 1228,
         "last_price": 1776.0,
         "last_date": "2026-10-26"
       },
@@ -90,7 +90,7 @@
         "score_basis": "long_horizons",
         "risk_adjusted_score": 0.8780311657328037,
         "volatility_blended": 0.2227286366422037,
-        "history_days": 1229,
+        "history_days": 1228,
         "last_price": 222.49,
         "last_date": "2026-10-26"
       },
@@ -114,7 +114,7 @@
         "score_basis": "long_horizons",
         "risk_adjusted_score": 0.6989626035279687,
         "volatility_blended": 0.15301117159767436,
-        "history_days": 1229,
+        "history_days": 1228,
         "last_price": 519500.0,
         "last_date": "2026-10-26"
       },
