@@ -21,7 +21,7 @@ Static dashboard (plain `index.html` + ES modules in `src/lib/`) for a monthly �
 - Fetch-script internals (bizportal quirks, horizon math, failure handling, test rules): `.claude/rules/fetch-script.md`, loaded when editing `scripts/**`.
 - Data refresh: `.github/workflows/update-data.yml` — daily 05:00 UTC cron, plus `workflow_dispatch` from the page's refresh button.
 - Colors, spacing, fonts: CSS custom properties in `src/styles/tokens.css` — never hard-code a color.
-- Homework write-ups: `homework/lessonN/exercise-M.md` (earlier ones predate the lesson split and sit flat at `homework/exercise-N.md`); development prompts: `prompts/`.
+- Homework write-ups: `homework/lessonN/exercise-M.md`; development prompts: `prompts/`.
 
 ## Running and verifying
 
