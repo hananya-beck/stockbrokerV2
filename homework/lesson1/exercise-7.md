@@ -1,6 +1,6 @@
 # Exercise 7 — Phase 3: spine, then epics
 
-> Slide 41. Took the final backtest PRD (`homework/lesson2/exercise-6.md`) to
+> Slide 41. Took the final backtest PRD (`homework/lesson1/exercise-6.md`) to
 > `bmad-architecture` for the architecture spine, then to `bmad-create-epics-and-stories`
 > for the epics and stories.
 
