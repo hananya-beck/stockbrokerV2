@@ -8,6 +8,14 @@
       "type": "stdio",
       "command": "codebase-memory-mcp",
       "args": []
+    },
+    "stockbroker": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["mcp/stockbroker.js"],
+      "env": {
+        "STOCKBROKER_DATA_PATH": "${STOCKBROKER_DATA_PATH:-data/funds.json}"
+      }
     }
   }
 }
