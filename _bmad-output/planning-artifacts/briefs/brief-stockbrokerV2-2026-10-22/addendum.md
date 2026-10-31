@@ -8,7 +8,7 @@ updated: 2026-10-22
 
 ## Rejected alternative: point-in-time recomputed weights
 
-The original EARS draft (`homework/lesson1/exercise-1.md`) reads naturally as "apply *that month's* suggested allocation weights." Taken literally, that means re-deriving `risk_adjusted_score` and `suggested_weight` as of every historical month, using only NAV data available up to that point.
+The original EARS draft (`homework/lesson2/exercise-1.md`) reads naturally as "apply *that month's* suggested allocation weights." Taken literally, that means re-deriving `risk_adjusted_score` and `suggested_weight` as of every historical month, using only NAV data available up to that point.
 
 That version answers a different, more interesting question: has the scoring algorithm itself been adding value over time, not just today's snapshot? But it requires a full backfilled daily NAV history per fund *and* replaying `compute_metrics`/`allocate_weights` at every historical point — effectively a second data pipeline, and its own epic.
 

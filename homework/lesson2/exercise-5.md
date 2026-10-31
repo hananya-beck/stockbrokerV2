@@ -1,6 +1,6 @@
 # Exercise 5 — Phase 1: the brief, with Mary
 
-> Slide 39. Brought the v2 goal (backtest simulator, `homework/lesson1/exercise-1.md`)
+> Slide 39. Brought the v2 goal (backtest simulator, `homework/lesson2/exercise-1.md`)
 > to `bmad-agent-analyst` → **CB** (`bmad-product-brief`), Coaching path.
 
 ## What Mary pushed back on

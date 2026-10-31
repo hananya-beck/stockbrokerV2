@@ -1,6 +1,6 @@
 # Exercise 6 — Phase 2: the PRD, with John
 
-> Slide 40. Took the approved backtest brief (`homework/lesson1/exercise-5.md`) to
+> Slide 40. Took the approved backtest brief (`homework/lesson2/exercise-5.md`) to
 > `bmad-agent-pm` → **PRD** (`bmad-prd`), Create intent. Then ran it again in Validate
 > mode and fixed what it found.
 
@@ -61,7 +61,7 @@
 - The PRD is under `_bmad-output/planning-artifacts/` and states the vision, users, and
   requirements without naming an implementation.
 - Each requirement traces back to the brief's scope and to the EARS draft in
-  `homework/lesson1/exercise-1.md`, where it is not superseded. The superseded wording,
+  `homework/lesson2/exercise-1.md`, where it is not superseded. The superseded wording,
   "that month's suggested weights," is replaced by the fixed-weights rule in FR-2.
 - The exercise card's own Goal and Done-when text was not retrievable from the course
   page. These checks come from the PRD workflow's finalize and validate steps.

@@ -31,7 +31,7 @@ Hananya can look at the chart once and form an honest opinion on whether the ris
 - Pick a start date and a monthly deposit amount; run the simulation.
 - Apply the fund list's current `suggested_weight` for every fund, unchanged, across the whole backtest range.
 - Render cumulative portfolio value as a line chart, with the equal-weight baseline always shown alongside it.
-- Handle funds with incomplete history for the selected range without crashing or silently zeroing their weight (see `homework/lesson1/exercise-1.md` for the exact EARS requirement).
+- Handle funds with incomplete history for the selected range without crashing or silently zeroing their weight (see `homework/lesson2/exercise-1.md` for the exact EARS requirement).
 
 **Out:**
 - Recomputing the score or suggested weight as of each historical month (see `addendum.md`).
