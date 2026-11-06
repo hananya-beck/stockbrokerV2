@@ -1,134 +1,134 @@
 {
-  "generated_at": "2026-11-05T12:58:40.740372+00:00",
+  "generated_at": "2026-11-06T12:45:08.812201+00:00",
   "funds": [
     {
       "id": "1168723",
       "name_he": "MTF סל אינדקס אנרגיה מתחדשת ישראל",
       "name_en": "Renewable Energy",
       "metrics": {
-        "return_1m": 0.02975495915986004,
-        "return_3m": -0.1627134724857685,
-        "return_6m": -0.23194081810269795,
-        "return_1y": 0.4514802631578947,
-        "volatility_1y": 0.3280380421203337,
-        "return_3y": 0.2969763672782635,
-        "volatility_3y": 0.2586768767439243,
+        "return_1m": 0.026086956521739202,
+        "return_3m": -0.16627414036740462,
+        "return_6m": -0.2091152815013405,
+        "return_1y": 0.44254278728606367,
+        "volatility_1y": 0.32795422743312985,
+        "return_3y": 0.3040287936984176,
+        "volatility_3y": 0.2585437623418126,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 1.1021517034244444,
-        "volatility_blended": 0.28757736231742825,
+        "risk_adjusted_score": 1.1071404260144533,
+        "volatility_blended": 0.2874647894631948,
         "history_days": 1228,
-        "last_price": 1765.0,
-        "last_date": "2026-11-04"
+        "last_price": 1770.0,
+        "last_date": "2026-11-05"
       },
       "stale": false,
-      "suggested_weight": 0.1884
+      "suggested_weight": 0.2
     },
     {
       "id": "5109889",
       "name_he": "MTF מחקה ת\"א 125",
       "name_en": "TASE 125",
       "metrics": {
-        "return_1m": -0.05287433155080212,
-        "return_3m": -0.043195426101832246,
-        "return_6m": -0.10793284365162648,
-        "return_1y": 0.17331897979463395,
-        "volatility_1y": 0.18203540900879625,
-        "return_3y": 0.2720566600052785,
-        "volatility_3y": 0.17485391351601812,
+        "return_1m": -0.07680722891566272,
+        "return_3m": -0.08688499077347211,
+        "return_6m": -0.13835857844165667,
+        "return_1y": 0.12209715316102954,
+        "volatility_1y": 0.18509775380931015,
+        "return_3y": 0.25886957541833144,
+        "volatility_3y": 0.1760222590640376,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 1.0793265348516254,
-        "volatility_blended": 0.17784620330467568,
+        "risk_adjusted_score": 0.9101341074927015,
+        "volatility_blended": 0.17980371520790114,
         "history_days": 1228,
-        "last_price": 425.07,
-        "last_date": "2026-11-04"
+        "last_price": 410.71,
+        "last_date": "2026-11-05"
       },
       "stale": false,
-      "suggested_weight": 0.1861
+      "suggested_weight": 0.1813
     },
     {
       "id": "5130604",
       "name_he": "MTF מחקה אינדקס תשתיות לאומיות ישראל",
       "name_en": "Infrastructure",
       "metrics": {
-        "return_1m": -0.02228363534597355,
-        "return_3m": -0.11866170534813314,
-        "return_6m": -0.15092505392350464,
-        "return_1y": 0.2635743026357431,
-        "volatility_1y": 0.23318295709474532,
-        "return_3y": 0.27492206861022095,
-        "volatility_3y": 0.22155017236604774,
+        "return_1m": -0.03927098388973116,
+        "return_3m": -0.14521845497600605,
+        "return_6m": -0.1706077482577072,
+        "return_1y": 0.21129827992355188,
+        "volatility_1y": 0.23407571571144659,
+        "return_3y": 0.26767436534061706,
+        "volatility_3y": 0.22200308451936498,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 1.0180383269605486,
-        "volatility_blended": 0.22639716600300505,
+        "risk_adjusted_score": 0.9031547818810367,
+        "volatility_blended": 0.22703334751606566,
         "history_days": 1228,
-        "last_price": 279.49,
-        "last_date": "2026-11-04"
+        "last_price": 272.53,
+        "last_date": "2026-11-05"
       },
       "stale": false,
-      "suggested_weight": 0.1804
+      "suggested_weight": 0.1806
     },
     {
       "id": "5131081",
       "name_he": "הראל מחקה ת\"א טכנולוגיה",
       "name_en": "Technology TA",
       "metrics": {
-        "return_1m": -0.10090329209298343,
-        "return_3m": -0.1237483311081442,
-        "return_6m": -0.2019910327532487,
-        "return_1y": 0.15041630148992113,
-        "volatility_1y": 0.25234942527938475,
-        "return_3y": 0.23989800732619737,
-        "volatility_3y": 0.20365665179804818,
+        "return_1m": -0.13950686346228314,
+        "return_3m": -0.17548344534696736,
+        "return_6m": -0.24445535950428843,
+        "return_1y": 0.07835418464193267,
+        "volatility_1y": 0.256700286344967,
+        "return_3y": 0.21928022760931598,
+        "volatility_3y": 0.20568054265023247,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 0.7548812938098858,
-        "volatility_blended": 0.22394530741527174,
+        "risk_adjusted_score": 0.5707141795595773,
+        "volatility_blended": 0.22693876918970524,
         "history_days": 1228,
-        "last_price": 210.02,
-        "last_date": "2026-11-04"
+        "last_price": 199.97,
+        "last_date": "2026-11-05"
       },
       "stale": false,
-      "suggested_weight": 0.1559
+      "suggested_weight": 0.1491
     },
     {
       "id": "1159243",
       "name_he": "ISHARES NASDAQ 100 UCITS ETF",
       "name_en": "Nasdaq 100 (unhedged, Barclays)",
       "metrics": {
-        "return_1m": -0.04143646408839774,
-        "return_3m": 0.062028157518873694,
-        "return_6m": 0.12662337662337664,
-        "return_1y": 0.10298792116973932,
-        "volatility_1y": 0.14845571724759682,
-        "return_3y": 0.17384719008372662,
-        "volatility_3y": 0.16173697613124272,
+        "return_1m": -0.08120437956204385,
+        "return_3m": 0.010030090270812364,
+        "return_6m": 0.09790667248146523,
+        "return_1y": 0.06696333969061241,
+        "volatility_1y": 0.152194637018117,
+        "return_3y": 0.15876931779061576,
+        "volatility_3y": 0.16288588349199765,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 0.65953033482229,
-        "volatility_blended": 0.15620311826305694,
+        "risk_adjusted_score": 0.4991594918533582,
+        "volatility_blended": 0.15843119746121404,
         "history_days": 1228,
-        "last_price": 520500.0,
-        "last_date": "2026-11-04"
+        "last_price": 503500.0,
+        "last_date": "2026-11-05"
       },
       "stale": false,
-      "suggested_weight": 0.147
+      "suggested_weight": 0.1423
     },
     {
       "id": "5141312",
       "name_he": "קסם KTF אינדקס בנקים ישראל",
       "name_en": "Banks",
       "metrics": {
-        "return_1m": -0.03741790528862776,
-        "return_3m": 0.011441024244075226,
-        "return_6m": -0.03708506224066399,
+        "return_1m": -0.047283613630360044,
+        "return_3m": -0.02872531418312385,
+        "return_6m": -0.05278823426420376,
         "return_1y": null,
         "volatility_1y": null,
         "return_3y": null,
@@ -136,23 +136,23 @@
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "partial_history",
-        "risk_adjusted_score": 0.13086618560451144,
+        "risk_adjusted_score": 0.06531478959811332,
         "volatility_blended": null,
-        "history_days": 248,
-        "last_price": 111.39,
-        "last_date": "2026-11-04"
+        "history_days": 249,
+        "last_price": 108.2,
+        "last_date": "2026-11-05"
       },
       "stale": false,
-      "suggested_weight": 0.0978
+      "suggested_weight": 0.1012
     },
     {
       "id": "5141775",
       "name_he": "הראל מחקה ת\"א בטחוניות",
       "name_en": "Israel Defense Forces (TA Defense index)",
       "metrics": {
-        "return_1m": -0.09708400833140474,
-        "return_3m": -0.20966271649954427,
-        "return_6m": -0.31087167711737174,
+        "return_1m": -0.13111217641418982,
+        "return_3m": -0.2765914987028537,
+        "return_6m": -0.37055044278520577,
         "return_1y": null,
         "volatility_1y": null,
         "return_3y": null,
@@ -160,14 +160,14 @@
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "partial_history",
-        "risk_adjusted_score": -0.4432782653808967,
+        "risk_adjusted_score": -0.5219970931563384,
         "volatility_blended": null,
-        "history_days": 208,
-        "last_price": 78.03,
-        "last_date": "2026-11-04"
+        "history_days": 209,
+        "last_price": 72.5,
+        "last_date": "2026-11-05"
       },
       "stale": false,
-      "suggested_weight": 0.0444
+      "suggested_weight": 0.0455
     }
   ]
 }
