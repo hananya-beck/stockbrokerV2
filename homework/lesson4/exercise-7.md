@@ -42,8 +42,7 @@ mods/stock-browser/
 - [x] `tsc` on the module against the bundled API types passes, with no errors.
 - [x] `claude plugin test ./mods/stock-browser` passes (4 tests): the selected row and its JSON preview, the binary line, the huge record, and the unreadable file.
 - [ ] **Not checked by a test:** the refusal line. The test kit doesn't expose `$.state.set`, so the test can't select an unknown id. The branch is in the code, but it has no test.
-- [ ] **Not checked by a test:** the line numbers in the gutter.
-- [ ] **Live:** run `claude --plugin-dir ./mods/stock-browser`, then `/stock-browser`, and press a row. The gutter numbers and the highlighting are drawn only in a terminal.
+- [x] **Live:** run `claude --plugin-dir ./mods/stock-browser`, then `/stock-browser`, and press a row. The gutter line numbers and the highlighting were checked in the terminal and look right.
 
 ## Status
-Code and tests are in place and pass. The refusal branch and the gutter need a live check.
+Code, tests and the live gutter and highlighting check pass. The refusal branch has no test yet.
