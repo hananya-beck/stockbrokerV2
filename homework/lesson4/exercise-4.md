@@ -28,9 +28,9 @@ Comparing two funds after the daily refresh is a question that repeats. Typing b
 ## Session runs
 - `/fund-compare 1168723, 5109889` produced the table and the verdict. Renewable Energy won on score (1.102 against 1.079). That run is where the comma bug showed up.
 - `/fund-compare 1168723 5109889` (space) and `/fund-compare 1168723,5109889` (no space) also ran in a session, and each gave the same table.
-- No real use this week yet. The "used at least three times" check is still open.
+- Used three times on real work today, as reported by the author.
 
 ## Done when
 - [x] Typing it with two values does the job, each value landing in the right place. Comma, space and no-space forms all ran in a session.
 - [x] Its `!`…`` command is read-only and pre-allowed. `Bash(git log *)` is the only shell rule.
-- [ ] Used at least three times on real work this week. *(Open.)*
+- [x] Used at least three times on real work this week. Three uses today, as reported by the author.
