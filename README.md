@@ -90,3 +90,13 @@ Edit `data/funds_config.json` to add/remove/rename funds.
 python scripts/fetch_data.py   # regenerates data/funds.json
 python -m http.server          # serve index.html locally
 ```
+
+### Claude Code setup
+
+1. Run `npm ci` once. It installs what the `stockbroker` MCP server needs
+   (`mcp/stockbroker.js`); without it the server fails to start.
+2. Start Claude Code in this folder, accept the trust dialog, and approve the
+   `stockbroker` server (`/mcp` shows its status).
+
+`STOCKBROKER_DATA_PATH` defaults to `data/funds.json` in `.mcp.json`. Set it only
+to point the server at another data file.
