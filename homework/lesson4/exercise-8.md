@@ -29,7 +29,7 @@ Exercise 6 and 7 write-ups now point at `marketplace/stock-browser` for `--plugi
 - [x] Approving the `stockbroker` MCP server first failed with a missing package: a clone has no `node_modules`. `npm ci` fixes it, and the server then answers the MCP handshake. The README now says to run it (`0910ef0`).
 - [x] **Interactive:** approve the `stockbroker` MCP server in the clone; it connects.
 - [x] **Interactive:** in the fresh clone, `/stock-browser` opens the pane. The `--plugin-dir` path is now `./marketplace/stock-browser`; `./mods/stock-browser` no longer exists.
-- [ ] Not checked: `/fund-compare` and the policy-audit skill in the fresh clone. This machine also has `stockbroker-tools` installed at user level, so the run can't show whether the team file alone enables it.
+- [x] In the fresh clone, `/stockbroker-tools:fund-compare 1168723 5109889` prints the table, and `/stockbroker-tools:policy-audit P1` runs in `default` permission mode with all checks passing. Plugin commands and skills are namespaced by plugin name, so the bare `/fund-compare` is unknown. This machine also has `stockbroker-tools` installed at user level, so these runs can't prove the team file alone enabled it.
 
 ## Open for the owner
 - **`context7` is defined twice.** The project file uses the public endpoint, `https://mcp.context7.com/mcp`. This machine's user scope uses a SeatGeek gateway. Claude Code warns about the conflict. Keep one; removing the user-scope entry is a change to this machine's config, so I didn't make it.
