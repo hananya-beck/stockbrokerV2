@@ -41,7 +41,8 @@ marketplace/
 
 - **Relative path.** The committed `.claude/settings.json` has `"path": "./marketplace"`. The CLI resolves it to the local folder, so no laptop path is committed.
 - **Settings side effect.** `disable` and `enable` write the flag into the committed `.claude/settings.json`. Commit it only in its enabled state.
-- **Fresh process, not `/reload-plugins`.** `claude -p` starts a new process, so it checks the state on disk. The interactive `/reload-plugins` step is still to be checked in a live session.
+- **Fresh process, not `/reload-plugins`.** `claude -p` starts a new process, so it checks the state on disk. The live check is below.
+- **Live reload.** In an interactive session, `/plugin disable` then `/reload-plugins` reported 3 plugins and 62 skills, with no `fund-compare` or `policy-audit`. `/plugin enable` then `/reload-plugins` reported 4 plugins, 64 skills and 1 hook, and both skills were listed again. No uninstall was needed.
 
 ## Status
 - [x] Plugin files written (manifest, marketplace, skill, command, hook).
@@ -49,6 +50,7 @@ marketplace/
 - [x] Old copies removed from `.claude/skills/policy-audit/` and `.claude/commands/fund-compare.md` (`git rm`).
 - [x] `claude plugin validate ./marketplace` passes.
 - [x] Lifecycle: install, use, disable (command gone), enable (command back), checked with the CLI in fresh processes.
-- [ ] `/reload-plugins` in a live session. *(Not checked.)*
-- [x] `${CLAUDE_PLUGIN_ROOT}` expands inside the skill body. A headless run of the skill ran `node "…/marketplace/stockbroker-tools/skills/policy-audit/scripts/audit.mjs"` with the real path, and the audit passed. The `allowed-tools` rule was not separately tested, because the user's default mode is `auto`.
+- [x] `/reload-plugins` in a live session: disable removes the plugin's skills, enable brings them back.
+- [x] `${CLAUDE_PLUGIN_ROOT}` expands inside the skill body. A headless run of the skill ran `node "…/marketplace/stockbroker-tools/skills/policy-audit/scripts/audit.mjs"` with the real path, and the audit passed.
+- [ ] The `allowed-tools` rule `Bash(node ${CLAUDE_PLUGIN_ROOT}/…/audit.mjs)` is not confirmed. In `claude -p "/policy-audit P1" --permission-mode default`, the audit's `node` call was denied, so the script did not run. A second attempt with the rule `Bash(node *policy-audit/scripts/audit.mjs*)` was also denied, and I reverted that change. Teammates in `default` mode will likely be prompted for the audit until this is fixed. The cause is not yet known.
 - [x] The hook's `additionalContext` reaches Claude. A headless run created `src/hook-probe.css`, and Claude quoted the policy reminder back. The probe file was then deleted.
