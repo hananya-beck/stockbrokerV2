@@ -1,0 +1,6 @@
+{
+  "name": "stockbroker-tools",
+  "version": "1.0.0",
+  "author": { "name": "stockbrokerV2" },
+  "description": "Policy audit skill, /fund-compare command, and a PostToolUse hook that reminds about the stockbrokerV2 policy on edits."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "stockbroker-marketplace",
+  "owner": { "name": "stockbrokerV2" },
+  "description": "Team tools for stockbrokerV2: the pre-push policy audit, fund comparison, and a policy reminder hook.",
+  "plugins": [
+    {
+      "name": "stockbroker-tools",
+      "source": "./stockbroker-tools",
+      "description": "Pre-push policy audit for stockbrokerV2, a fund comparison command, and a reminder about the policy when editing the page or the bot-generated data.",
+      "version": "1.0.0"
+    }
+  ]
+}

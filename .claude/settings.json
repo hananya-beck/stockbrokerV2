@@ -1,6 +1,4 @@
 {
-  "effortLevel": "high",
-  "model": "haiku",
   "permissions": {
     "allow": [
       "Bash(npm run check)",
@@ -11,5 +9,18 @@
       "Bash(python -m ruff check *)",
       "Bash(python -m mypy *)"
     ]
-  }
+  },
+  "model": "haiku",
+  "enabledPlugins": {
+    "stockbroker-tools@stockbroker-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "stockbroker-marketplace": {
+      "source": {
+        "source": "directory",
+        "path": "./marketplace"
+      }
+    }
+  },
+  "effortLevel": "high"
 }

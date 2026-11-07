@@ -1,5 +1,5 @@
 // Needs only Node 18+ (already required by `npm run check`); no npm install.
-// Run from the repo root: node .claude/skills/policy-audit/scripts/audit.mjs
+// Run from the repo root, the directory being audited: node <plugin>/skills/policy-audit/scripts/audit.mjs
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
