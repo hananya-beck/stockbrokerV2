@@ -2,6 +2,12 @@
 
 **Goal:** A one-line trigger for a prompt I'd otherwise retype every day.
 
+## What the exercise asks
+From the syllabus (Lesson 4, exercise 4; slide 56, "Custom commands with arguments"):
+- Write one custom command for the project that takes **two arguments**, injects live context with a `!`…`` line that runs before Claude reads it, and inlines one file with `@`.
+- **Done when:** typing it with two values does the job, each value landing in the right place; the `!`…`` command is read-only and pre-allowed; it was used at least three times on real work this week.
+- **Hint:** positional arguments are 0-based (`$0` is the first). Named `arguments:` read better. Expansion has nobody to approve a prompt, so a command under `ask` fails closed.
+
 ## The command: `/fund-compare`
 `.claude/commands/fund-compare.md` compares two funds from `data/funds.json` by their TASE security id.
 
@@ -21,10 +27,10 @@ Comparing two funds after the daily refresh is a question that repeats. Typing b
 
 ## Session runs
 - `/fund-compare 1168723, 5109889` produced the table and the verdict. Renewable Energy won on score (1.102 against 1.079). That run is where the comma bug showed up.
-- Still open: a space-only run (`/fund-compare 1168723 5109889`). The body handles it by reading, not by a second run.
+- `/fund-compare 1168723 5109889` (space) and `/fund-compare 1168723,5109889` (no space) also ran in a session, and each gave the same table.
 - No real use this week yet. The "used at least three times" check is still open.
 
 ## Done when
-- [x] Typing it with two values does the job, each value landing in the right place. Comma form run in a session; space form to confirm.
+- [x] Typing it with two values does the job, each value landing in the right place. Comma, space and no-space forms all ran in a session.
 - [x] Its `!`…`` command is read-only and pre-allowed. `Bash(git log *)` is the only shell rule.
 - [ ] Used at least three times on real work this week. *(Open.)*
