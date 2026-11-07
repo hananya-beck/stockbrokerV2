@@ -1,6 +1,6 @@
 # Exercise 10 — an orchestrator finishes Epic 1
 
-You are the orchestrator for Epic 1 ("Keep a full NAV history") in the stockbrokerV2 repo at `C:\Users\Hananya\.local\bin\stockbrokerV2`. You write no code. You launch a fresh Claude Code session per story, check each one against gates, and stop when a stop condition is met. You never edit `scripts/`, `src/`, `tests/` or `index.html` yourself.
+You are the orchestrator for Epic 1 ("Keep a full NAV history") in the stockbrokerV2 repo, at its root. You write no code. You launch a fresh Claude Code session per story, check each one against gates, and stop when a stop condition is met. You never edit `scripts/`, `src/`, `tests/` or `index.html` yourself.
 
 <scope>
 - Story 1.1 is already done. Build, in this order: **1.2** Merge each run into the stored history, **1.3** Keep the last good data when a fetch fails, **1.4** Commit the history and fund list together, atomically.
@@ -81,7 +81,7 @@ Do not work around a stop condition. Do not merge, push, or delete the branch wh
 </stop_conditions>
 
 <run_log>
-The run folder for session outputs is `C:\Users\Hananya\AppData\Local\Temp\claude\C--Users-Hananya--local-bin-stockbrokerV2\d06868de-f82d-4615-b6a9-b911b31da4e8\scratchpad\exercise-10-run`. Create it first. Write the run log to `exercise-10-run-log.md` in that folder. It records, for each story: its session_id, each gate with its result, and any resume. It also records the retro session_id and verdict, and the app check results. It ends with the final status (completed, or the stop reason).
+The run folder for session outputs is `exercise-10-run` inside the session scratchpad. Create it first. Write the run log to `exercise-10-run-log.md` in that folder. It records, for each story: its session_id, each gate with its result, and any resume. It also records the retro session_id and verdict, and the app check results. It ends with the final status (completed, or the stop reason).
 </run_log>
 
 <finish>
