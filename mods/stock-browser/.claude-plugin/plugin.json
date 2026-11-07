@@ -1,0 +1,7 @@
+{
+  "name": "stock-browser",
+  "version": "0.1.0",
+  "description": "A StockBrowser pane beside the chat that ranks the TASE funds by score; a press opens one fund's figures.",
+  "author": { "name": "stockbrokerV2" },
+  "types": "./types/index.d.ts"
+}
