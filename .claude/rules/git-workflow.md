@@ -1,6 +1,6 @@
 # Git workflow
 
-These rules replace the global git rules in `C:\Users\Hananya\.claude\CLAUDE.md` for this repository. Where they conflict, follow this file.
+These rules replace the global git rules in the user's global `CLAUDE.md` for this repository. Where they conflict, follow this file.
 
 - Work directly on `main`. Do not create local branches for exercises, stories or homework. Pull with rebase before each push.
 - Commit subjects follow the existing history: `Exercise N: functional title`, for example `Exercise 9: store each fund's daily NAV series (Story 1.1)`.
