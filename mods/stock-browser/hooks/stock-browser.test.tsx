@@ -1,4 +1,6 @@
+import type { On } from 'claude-code'
 import { expect, test } from 'claude-code/testing'
+import type { Engine, Mounted } from 'claude-code/testing'
 
 const PANE = {
   plugin: 'stock-browser',
@@ -13,6 +15,8 @@ const PANE = {
     view: {},
   },
 } as const
+
+const FUNDS_FILE = /data[\\/]funds\.json$/
 
 const fund = (
   id: string,
@@ -47,70 +51,68 @@ const FUNDS = JSON.stringify({
   ],
 })
 
-test('selecting a fund shows its record highlighted as JSON, and marks the row', async ($, on) => {
+const stubFundsFile = (on: On, text: string) => {
   on('command.register', () => ({ value: { command: 'stock-browser' } }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
-  on('fs.read', (_, e) => ({
-    value: /data[\\/]funds\.json$/.test(e.path) ? FUNDS : '',
-  }))
+  on('fs.read', (_, e) => ({ value: FUNDS_FILE.test(e.path) ? text : '' }))
+}
 
+const withPane = async (
+  $: Engine,
+  body: (ui: Mounted<'desktop', 'Pane'>) => Promise<void>,
+) => {
   await $.session.start({ cwd: '.', surface: 'desktop', isInteractive: true })
   const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
 
-  expect(await ui.find({ type: 'Code' })).toBeUndefined()
-  expect((await ui.find({ key: 'b' }))?.text).toMatch(/Beta \(stale\)/)
+  try {
+    await body(ui)
+  } finally {
+    await ui.unmount()
+  }
+}
 
-  await ui.press({ key: 'a' })
+test('selecting a fund shows its record highlighted as JSON, and marks the row', async ($, on) => {
+  stubFundsFile(on, FUNDS)
 
-  expect((await ui.find({ key: 'a' }))?.text).toMatch(/^●/)
-  expect((await ui.find({ type: 'Code' }))?.props?.language).toBe('json')
-  expect((await ui.find({ type: 'Code' }))?.props?.source).toMatch(/"name_en": "Alpha"/)
-  await ui.unmount()
+  await withPane($, async ui => {
+    expect(await ui.find({ type: 'Code' })).toBeUndefined()
+    expect((await ui.find({ key: 'b' }))?.text).toMatch(/Beta \(stale\)/)
+
+    await ui.press({ key: 'a' })
+
+    expect((await ui.find({ key: 'a' }))?.text).toMatch(/^●/)
+    expect((await ui.find({ type: 'Code' }))?.props?.language).toBe('json')
+    expect((await ui.find({ type: 'Code' }))?.props?.source).toMatch(/"name_en": "Alpha"/)
+  })
 })
 
 test('a record that holds control characters shows one calm line, not a preview', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'stock-browser' } }))
-  on('session.start', (_, e) => ({ cwd: e.cwd }))
-  on('fs.read', (_, e) => ({
-    value: /data[\\/]funds\.json$/.test(e.path) ? FUNDS : '',
-  }))
+  stubFundsFile(on, FUNDS)
 
-  await $.session.start({ cwd: '.', surface: 'desktop', isInteractive: true })
-  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  await withPane($, async ui => {
+    await ui.press({ key: 'c' })
 
-  await ui.press({ key: 'c' })
-
-  expect(await ui.find({ type: 'Text', text: /binary data/ })).toBeDefined()
-  expect(await ui.find({ type: 'Code' })).toBeUndefined()
-  await ui.unmount()
+    expect(await ui.find({ type: 'Text', text: /binary data/ })).toBeDefined()
+    expect(await ui.find({ type: 'Code' })).toBeUndefined()
+  })
 })
 
 test('a record over the cap shows its first lines and says how many are left', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'stock-browser' } }))
-  on('session.start', (_, e) => ({ cwd: e.cwd }))
-  on('fs.read', (_, e) => ({
-    value: /data[\\/]funds\.json$/.test(e.path) ? FUNDS : '',
-  }))
+  stubFundsFile(on, FUNDS)
 
-  await $.session.start({ cwd: '.', surface: 'desktop', isInteractive: true })
-  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  await withPane($, async ui => {
+    await ui.press({ key: 'd' })
 
-  await ui.press({ key: 'd' })
-
-  const source = (await ui.find({ type: 'Code' }))?.props?.source as string
-  expect(source.split('\n').length).toBe(30)
-  expect(await ui.find({ type: 'Text', text: /more lines not shown/ })).toBeDefined()
-  await ui.unmount()
+    const source = (await ui.find({ type: 'Code' }))?.props?.source as string
+    expect(source.split('\n').length).toBe(30)
+    expect(await ui.find({ type: 'Text', text: /more lines not shown/ })).toBeDefined()
+  })
 })
 
 test('a fund file that cannot be read shows a line saying why', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'stock-browser' } }))
-  on('session.start', (_, e) => ({ cwd: e.cwd }))
-  on('fs.read', () => ({ value: '{' }))
+  stubFundsFile(on, '{')
 
-  await $.session.start({ cwd: '.', surface: 'desktop', isInteractive: true })
-  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
-
-  expect(await ui.find({ type: 'Text', text: /could not be read/ })).toBeDefined()
-  await ui.unmount()
+  await withPane($, async ui => {
+    expect(await ui.find({ type: 'Text', text: /could not be read/ })).toBeDefined()
+  })
 })
