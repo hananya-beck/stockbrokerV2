@@ -1,6 +1,8 @@
 {
   "name": "stockbroker-marketplace",
-  "owner": { "name": "stockbrokerV2" },
+  "owner": {
+    "name": "stockbrokerV2"
+  },
   "description": "Team tools for stockbrokerV2: the pre-push policy audit, fund comparison, and a policy reminder hook.",
   "plugins": [
     {
@@ -8,6 +10,12 @@
       "source": "./stockbroker-tools",
       "description": "Pre-push policy audit for stockbrokerV2, a fund comparison command, and a reminder about the policy when editing the page or the bot-generated data.",
       "version": "1.0.0"
+    },
+    {
+      "name": "stock-browser",
+      "source": "./stock-browser",
+      "description": "StockBrowser pane: the TASE fund ranking, with each fund's record previewed in a pane beside the chat.",
+      "version": "0.1.0"
     }
   ]
 }

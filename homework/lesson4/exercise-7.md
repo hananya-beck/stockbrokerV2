@@ -20,7 +20,7 @@ From the syllabus (Level 5 homework, exercise 7; slide 60, "What a mod is"). The
 
 ## What I built
 ```
-mods/stock-browser/
+marketplace/stock-browser/
 ├── .claude-plugin/plugin.json   ← manifest, names the types contract
 ├── hooks/hooks.json             ← modules: ./register.tsx
 ├── hooks/register.tsx           ← /stock-browser, the Pane render hook, the preview
@@ -38,11 +38,11 @@ mods/stock-browser/
 - **Changes from exercise 6.** A press selects a fund instead of toggling its figures, which now appear in the record preview. The list is no longer cut to the viewport, since the data has seven funds.
 
 ## Checks
-- [x] `claude plugin validate ./mods/stock-browser` passes. The only remaining message is the plugin-directory submission check (license and icon), which applies only when publishing.
+- [x] `claude plugin validate ./marketplace/stock-browser` passes. The only remaining message is the plugin-directory submission check (license and icon), which applies only when publishing.
 - [x] `tsc` on the module against the bundled API types passes, with no errors.
-- [x] `claude plugin test ./mods/stock-browser` passes (4 tests): the selected row and its JSON preview, the binary line, the huge record, and the unreadable file.
+- [x] `claude plugin test ./marketplace/stock-browser` passes (4 tests): the selected row and its JSON preview, the binary line, the huge record, and the unreadable file.
 - [ ] **Not checked by a test:** the refusal line. The test kit doesn't expose `$.state.set`, so the test can't select an unknown id. The branch is in the code, but it has no test.
-- [x] **Live:** run `claude --plugin-dir ./mods/stock-browser`, then `/stock-browser`, and press a row. The gutter line numbers and the highlighting were checked in the terminal and look right.
+- [x] **Live:** run `claude --plugin-dir ./marketplace/stock-browser`, then `/stock-browser`, and press a row. The gutter line numbers and the highlighting were checked in the terminal and look right.
 
 ## Status
 Code, tests and the live gutter and highlighting check pass. The refusal branch has no test yet.

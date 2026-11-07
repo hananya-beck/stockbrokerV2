@@ -9,7 +9,7 @@ From the syllabus (Level 5 homework, exercise 6; slide 60, "What a mod is"). The
 
 ## What I built
 ```
-mods/stock-browser/
+marketplace/stock-browser/
 ├── .claude-plugin/plugin.json   ← manifest, names the types contract
 ├── hooks/hooks.json             ← modules: ./register.tsx
 ├── hooks/register.tsx           ← session.start, /stock-browser, the Pane render hook
@@ -26,14 +26,14 @@ mods/stock-browser/
 - **Room.** The pane shows as many rows as the viewport fits and says how many are left. It doesn't scroll yet.
 
 ## Checks
-- [x] `claude plugin validate ./mods/stock-browser` passes. The only remaining message is the plugin-directory submission check (license and icon), which applies only when publishing.
+- [x] `claude plugin validate ./marketplace/stock-browser` passes. The only remaining message is the plugin-directory submission check (license and icon), which applies only when publishing.
 - [x] `tsc` on the module against the bundled API types passes, with no errors.
-- [x] `claude plugin test ./mods/stock-browser` passes (2 tests). The tests stub `fs.read` with a two-fund fixture, so they check the ranking, the stale marker, the press and the error line, not the real file.
+- [x] `claude plugin test ./marketplace/stock-browser` passes (2 tests). The tests stub `fs.read` with a two-fund fixture, so they check the ranking, the stale marker, the press and the error line, not the real file.
 - [x] `data/funds.json` has every field the mod reads, for all 7 funds.
-- [x] Live check in a terminal, `claude --plugin-dir ./mods/stock-browser`: `/stock-browser` opens the pane beside the chat, the ranking shows the real data, and a save redraws the open session.
+- [x] Live check in a terminal, `claude --plugin-dir ./marketplace/stock-browser`: `/stock-browser` opens the pane beside the chat, the ranking shows the real data, and a save redraws the open session.
 
 ## Notes
-- **Where the mod lives.** The plugin-authoring skill writes new mods to a folder outside the repo and asks the person to turn on hot reload. This exercise keeps the mod in `mods/stock-browser/` and loads it with `--plugin-dir`, as the exercise's setup says, so the hot-reload question doesn't apply.
+- **Where the mod lives.** The plugin-authoring skill writes new mods to a folder outside the repo and asks the person to turn on hot reload. This exercise keeps the mod in `marketplace/stock-browser/` and loads it with `--plugin-dir`, as the exercise's setup says, so the hot-reload question doesn't apply.
 - **Data source.** The mod reads the committed `data/funds.json`, which the daily bot refreshes. It doesn't recompute scores, so the pane matches the dashboard's ranking.
 
 ## Status
