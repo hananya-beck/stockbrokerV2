@@ -50,5 +50,5 @@ marketplace/
 - [x] `claude plugin validate ./marketplace` passes.
 - [x] Lifecycle: install, use, disable (command gone), enable (command back), checked with the CLI in fresh processes.
 - [ ] `/reload-plugins` in a live session. *(Not checked.)*
-- [ ] `${CLAUDE_PLUGIN_ROOT}` expands inside the skill body and `allowed-tools`. *(Not verified. The skill was not invoked; the CLI lists it as a component.)*
-- [ ] The hook's `additionalContext` reaches Claude. *(Script output checked by hand: it prints the policy text for `index.html`, the bot note for `data/funds.json`, and nothing for other files. Claude's receipt is not verified.)*
+- [x] `${CLAUDE_PLUGIN_ROOT}` expands inside the skill body. A headless run of the skill ran `node "…/marketplace/stockbroker-tools/skills/policy-audit/scripts/audit.mjs"` with the real path, and the audit passed. The `allowed-tools` rule was not separately tested, because the user's default mode is `auto`.
+- [x] The hook's `additionalContext` reaches Claude. A headless run created `src/hook-probe.css`, and Claude quoted the policy reminder back. The probe file was then deleted.
