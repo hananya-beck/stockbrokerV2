@@ -27,8 +27,8 @@ Exercise 6 and 7 write-ups now point at `marketplace/stock-browser` for `--plugi
 - [x] `claude mcp list` in the fresh clone shows the `stockbroker` server, pending approval. It's defined in the repo, and a teammate approves it in an interactive session.
 - [ ] **Interactive, not checked here:** in the fresh clone, accept the trust dialog, then check that Claude Code offers the marketplace and its plugins without an install path.
 - [x] Approving the `stockbroker` MCP server first failed with a missing package: a clone has no `node_modules`. `npm ci` fixes it, and the server then answers the MCP handshake. The README now says to run it (`0910ef0`).
-- [ ] **Interactive:** approve the `stockbroker` MCP server in the clone and check that it connects.
-- [ ] **Interactive:** in the fresh clone, `/stock-browser` opens the pane beside the chat.
+- [x] **Interactive:** approve the `stockbroker` MCP server in the clone; it connects.
+- [x] **Interactive:** in the fresh clone, `/stock-browser` opens the pane. The `--plugin-dir` path is now `./marketplace/stock-browser`; `./mods/stock-browser` no longer exists.
 - [ ] Not checked: `/fund-compare` and the policy-audit skill in the fresh clone. This machine also has `stockbroker-tools` installed at user level, so the run can't show whether the team file alone enables it.
 
 ## Open for the owner
