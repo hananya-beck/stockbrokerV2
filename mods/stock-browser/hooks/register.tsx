@@ -3,11 +3,16 @@ import type { EngineInterface, Register } from 'claude-code'
 
 const PANE = 'stock-browser'
 const DATA = 'data/funds.json'
+const CAP_BYTES = 4096
+const CAP_LINES = 30
+// JSON.stringify writes a control character as an escape, so an escape here is one the record holds.
+const CONTROL_ESCAPE = /\\u00[01][0-9a-f]/i
+const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g
 
-const openFunds = atom(
-  { plugin: 'stock-browser', key: 'openFunds' } as const,
-  [] as string[],
-  { shape: 'open-funds-1' },
+const selectedFund = atom(
+  { plugin: 'stock-browser', key: 'selectedFund' } as const,
+  '',
+  { shape: 'selected-fund-1' },
 )
 
 type RawFund = {
@@ -32,40 +37,22 @@ type RawData = { generated_at: string; funds: RawFund[] }
 type Fund = {
   id: string
   nameEn: string
-  nameHe: string
   score: number
-  return1m: number | null
-  return3m: number | null
-  return1y: number | null
-  return3y: number | null
-  volatility: number
-  weight: number
   stale: boolean
-  lastDate: string
+  raw: RawFund
 }
 
 type Loaded = { funds: Fund[]; generatedAt: string } | { error: string }
 
+const printable = (text: string) => text.replace(CONTROL_CHARS, '�')
+
 const toFund = (raw: RawFund): Fund => ({
   id: raw.id,
   nameEn: raw.name_en,
-  nameHe: raw.name_he,
   score: raw.metrics.risk_adjusted_score,
-  return1m: raw.metrics.return_1m,
-  return3m: raw.metrics.return_3m,
-  return1y: raw.metrics.return_1y,
-  return3y: raw.metrics.return_3y,
-  volatility: raw.metrics.volatility_blended,
-  weight: raw.suggested_weight,
   stale: raw.stale,
-  lastDate: raw.metrics.last_date,
+  raw,
 })
-
-const percent = (value: number | null) =>
-  value === null ? '—' : `${(value * 100).toFixed(1)}%`
-
-const toggle = (list: string[], id: string) =>
-  list.includes(id) ? list.filter(one => one !== id) : [...list, id]
 
 async function loadFunds($: EngineInterface): Promise<Loaded> {
   try {
@@ -99,8 +86,8 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    const { Box, Button, Text } = $.ui.resolve(e)
-    const open = await read($, openFunds)
+    const { Box, Button, Code, Text } = $.ui.resolve(e)
+    const selected = await read($, selectedFund)
     const loaded = await loadFunds($)
 
     if ('error' in loaded) {
@@ -111,36 +98,41 @@ export const register: Register = on => {
       )
     }
 
-    const room = Math.max(1, (e.viewport?.rows ?? 24) - 4)
-    const lines = loaded.funds.flatMap(fund => {
-      const isOpen = open.includes(fund.id)
-      const label = `${isOpen ? '▾' : '▸'} ${fund.score.toFixed(3)}  ${fund.nameEn}${fund.stale ? ' (stale)' : ''}`
-      const button = (
-        <Button
-          key={fund.id}
-          plain
-          onPress={() => update($, openFunds, list => toggle(list, fund.id))}
-        >
-          {label}
-        </Button>
-      )
-
-      if (!isOpen) return [button]
-
-      return [
-        button,
-        <Text>{`   Returns  1m ${percent(fund.return1m)}  3m ${percent(fund.return3m)}  1y ${percent(fund.return1y)}  3y ${percent(fund.return3y)}`}</Text>,
-        <Text>{`   Volatility ${percent(fund.volatility)}   Suggested weight ${percent(fund.weight)}`}</Text>,
-        <Text>{`   Last price ${fund.lastDate}   ${fund.nameHe}`}</Text>,
-      ]
-    })
+    const chosen = loaded.funds.find(fund => fund.id === selected)
+    const record = chosen ? JSON.stringify(chosen.raw, null, 2) : ''
+    const bytes = new TextEncoder().encode(record).byteLength
+    const isOverCap = bytes > CAP_BYTES
+    const recordLines = record.split('\n')
+    const shown = isOverCap
+      ? recordLines.slice(0, CAP_LINES).join('\n')
+      : record
 
     return (
       <Box flexDirection="column">
         <Text dimColor>{`Data as of ${loaded.generatedAt.slice(0, 10)}`}</Text>
-        {lines.slice(0, room)}
-        {lines.length > room && (
-          <Text dimColor>{`${lines.length - room} more not shown`}</Text>
+        {loaded.funds.map(fund => (
+          <Button
+            key={fund.id}
+            plain
+            onPress={() => update($, selectedFund, () => fund.id)}
+          >
+            {`${fund.id === selected ? '●' : '▸'} ${fund.score.toFixed(3)}  ${printable(fund.nameEn)}${fund.stale ? ' (stale)' : ''}`}
+          </Button>
+        ))}
+        {selected !== '' && !chosen && (
+          <Text>{`${selected} is not a fund in ${DATA}, so nothing is shown.`}</Text>
+        )}
+        {chosen && (
+          <Text>{`${printable(chosen.nameEn)} · ${DATA} · ${bytes} B`}</Text>
+        )}
+        {chosen && CONTROL_ESCAPE.test(record) && (
+          <Text>{'This record holds binary data, so it has no text preview.'}</Text>
+        )}
+        {chosen && !CONTROL_ESCAPE.test(record) && (
+          <Code source={shown} language="json" startLine={1} />
+        )}
+        {chosen && !CONTROL_ESCAPE.test(record) && isOverCap && (
+          <Text dimColor>{`${recordLines.length - CAP_LINES} more lines not shown`}</Text>
         )}
       </Box>
     )
