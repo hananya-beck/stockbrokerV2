@@ -30,12 +30,11 @@ mods/stock-browser/
 - [x] `tsc` on the module against the bundled API types passes, with no errors.
 - [x] `claude plugin test ./mods/stock-browser` passes (2 tests). The tests stub `fs.read` with a two-fund fixture, so they check the ranking, the stale marker, the press and the error line, not the real file.
 - [x] `data/funds.json` has every field the mod reads, for all 7 funds.
-- [ ] **Not checked here:** the pane drawn beside the chat, the real ranking, and a save redrawing a live session. These need an interactive terminal (Claude Code 2.1.287+). Run `claude --plugin-dir ./mods/stock-browser`, then `/stock-browser`.
-- [ ] Not checked: the command itself (`command.run`) in a live session. The tests cover the pane, not the command.
+- [x] Live check in a terminal, `claude --plugin-dir ./mods/stock-browser`: `/stock-browser` opens the pane beside the chat, the ranking shows the real data, and a save redraws the open session.
 
 ## Notes
 - **Where the mod lives.** The plugin-authoring skill writes new mods to a folder outside the repo and asks the person to turn on hot reload. This exercise keeps the mod in `mods/stock-browser/` and loads it with `--plugin-dir`, as the exercise's setup says, so the hot-reload question doesn't apply.
 - **Data source.** The mod reads the committed `data/funds.json`, which the daily bot refreshes. It doesn't recompute scores, so the pane matches the dashboard's ranking.
 
 ## Status
-Code and tests are in place and pass. The live check (pane, real data, redraw on save) is still open.
+Code, tests and the live check pass.
