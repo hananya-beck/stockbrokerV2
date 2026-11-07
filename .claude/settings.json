@@ -12,7 +12,8 @@
   },
   "model": "haiku",
   "enabledPlugins": {
-    "stockbroker-tools@stockbroker-marketplace": true
+    "stockbroker-tools@stockbroker-marketplace": true,
+    "stock-browser@stockbroker-marketplace": true
   },
   "extraKnownMarketplaces": {
     "stockbroker-marketplace": {
