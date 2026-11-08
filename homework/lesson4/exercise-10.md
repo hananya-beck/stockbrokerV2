@@ -36,8 +36,8 @@ agent: policy-reviewer
 - **The agent directly** when you want a worker on a task you describe in the moment, such as "review this file for the rules", and you don't need the procedure written down.
 - **The skill** when the same procedure runs again and again, such as the pre-commit review, so the procedure is written down once and the main window only sees the verdict.
 
-## Open
-- **Rule 5 noise.** The reviewer also reported the new `<img>` element under rule 5 and then said it wasn't a string violation. Rule 5 should cover only visible text and user-facing attributes such as `alt`, `title` and `aria-label` that hold words. I haven't changed the agent yet, because that would need a rerun.
+## Rule 5
+The reviewer's rule 5 now covers any text a user sees or hears in `index.html`, new or existing, including words in `alt`, `title`, `aria-label` and `placeholder`. An empty `alt=""` is exempt. Checked on `index.html`, it now reports the existing hard-coded strings: the `<title>` at line 6, the `aria-label` at line 134, and the `עברית` and `English` labels at lines 135 and 136. Those are real violations of `AGENTS.md`, not part of this exercise, so they're still to fix.
 
 ## Status
-The skill runs forked onto the agent, finds the planted violation, and keeps the main window small. The rule 5 wording is still open.
+The skill runs forked onto the agent, finds the planted violation, and keeps the main window small. Rule 5 now catches the existing hard-coded strings in `index.html`.
