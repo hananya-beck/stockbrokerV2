@@ -14,7 +14,8 @@ The section in `CLAUDE.md` lists each extension with its rung and reason. In sho
 | --- | --- |
 | rule, always loaded | `AGENTS.md`, `CLAUDE.md`, `git-workflow.md` |
 | rule, path-scoped | `src/lib/CLAUDE.md` and five rules in `.claude/rules/` |
-| skill | `add-fund`, `policy-review` (forked), and 29 `bmad-*` skills |
+| command | `add-fund` (moved down from a skill) |
+| skill | `policy-review` (forked), and 29 `bmad-*` skills |
 | agent | `policy-reviewer` |
 | plugin | `stockbroker-tools` (policy skill, fund-compare command, reminder hook) |
 | mod | `stock-browser` (the pane, outside the ladder) |
@@ -23,6 +24,11 @@ The section in `CLAUDE.md` lists each extension with its rung and reason. In sho
 ## The change
 - **Removed: the `context7` MCP server from the team file** (`.mcp.json`, commit `49f8c0b`). The repo has no library code to look up, and its two tools load into every session of anyone who trusts the folder.
 - **Measured with `/context`.** In a clean config (no user-level servers), with the team file as it was: deferred MCP tools 10.1k tokens. With the change: 8.3k. The `context7` rows are gone. On this machine, `context7` also comes from user scope, so `/context` doesn't change here.
+
+## Moved down a rung
+- **`add-fund`: skill → command** (`.claude/commands/add-fund.md`). It writes the fund config and README, runs the fetch and commits, so the person should start it on purpose. As a skill, it could also start from a loose phrase like "remove a fund" through its description. As a command, it starts only when the person types `/add-fund`, and its arguments are the ID and names.
+- **Measured with `/context`.** The `add-fund` row dropped from about 110 tokens to about 60. The Skills total still reads 9.7k at this rounding.
+- **Checked.** `/add-fund` with no argument asks for the ID and the two names and changes nothing; `git status` shows only the rename.
 
 ## Why the rest stays
 - **`stockbroker` MCP.** Its `fund_metrics` tool answers "how did this fund do" in any chat without a file read. A command would need the person to type it, and the model couldn't call it on its own.
@@ -35,6 +41,7 @@ The section in `CLAUDE.md` lists each extension with its rung and reason. In sho
 
 ## Checks
 - [x] `CLAUDE.md` has the section with each extension, its rung and a reason.
-- [x] One extension was removed, and the commit says why and carries the `/context` numbers.
+- [x] One extension was removed (`context7`), and the commit says why and carries the `/context` numbers.
+- [x] One extension moved down a rung (`add-fund`: skill → command), and its commit says why.
 - [x] The team MCP count is one (`stockbroker`), defended above.
 - [ ] Not done: moving the BMAD skills into a plugin (proposed above).

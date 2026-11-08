@@ -1,9 +1,11 @@
 ---
-name: add-fund
-description: Add a new TASE fund, ETF or קרן סל to the dashboard by its bizportal security ID (נייר ערך number), then refresh the data and show the new weights. Use when the user says things like "add a fund", "track another fund", "add this ETF", "include security 1234567", "remove a fund" or "rename a fund", or pastes a bizportal fund link.
+description: Add a TASE fund, ETF or קרן סל to the dashboard by its bizportal security ID, then refresh the data and show the new weights. Also removes or renames a fund.
+argument-hint: "<security ID> [Hebrew name] [English name]"
 ---
 
 # Add a fund
+
+Arguments: $ARGUMENTS
 
 1. Get the bizportal security ID (the number in `bizportal.co.il/mutualfunds/quote/.../<id>`) and the Hebrew and English names. Ask for whichever is missing.
 2. Check that `data/funds_config.json` doesn't already list that ID.

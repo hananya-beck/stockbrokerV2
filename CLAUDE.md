@@ -6,7 +6,8 @@ The ladder is rule → command → skill → plugin → MCP, lightest first. The
 
 - `AGENTS.md`, `CLAUDE.md`, `.claude/rules/git-workflow.md`: rules, loaded every session. The policy and the commit rules apply to all work.
 - `src/lib/CLAUDE.md` and the five path-scoped rules in `.claude/rules/`: rules that load only for their own files.
-- `.claude/skills/add-fund`, `.claude/skills/policy-review`: skills, because each is a procedure used now and then, not on every session. `policy-review` runs forked onto the agent.
+- `.claude/commands/add-fund.md`: a command, because it writes config and commits, so the person starts it with `/add-fund` rather than a description match.
+- `.claude/skills/policy-review`: a skill, because it is a procedure used now and then, not on every session. It runs forked onto the agent.
 - `.claude/skills/bmad-*` (29 skills): skills for the BMAD workflow. Each adds a description to every session, so they are the heaviest skills here. Moving them to a plugin is proposed, not done.
 - `.claude/agents/policy-reviewer.md`: an agent, because a read-only reviewer needs its own window and tool list.
 - `marketplace/stockbroker-tools`: a plugin, because teammates get the policy skill, the fund-compare command and the reminder hook from one install.
