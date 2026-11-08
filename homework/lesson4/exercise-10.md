@@ -37,7 +37,7 @@ agent: policy-reviewer
 - **The skill** when the same procedure runs again and again, such as the pre-commit review, so the procedure is written down once and the main window only sees the verdict.
 
 ## Rule 5
-The reviewer's rule 5 now covers any text a user sees or hears in `index.html`, new or existing, including words in `alt`, `title`, `aria-label` and `placeholder`. An empty `alt=""` is exempt. Checked on `index.html`, it now reports the existing hard-coded strings: the `<title>` at line 6, the `aria-label` at line 134, and the `עברית` and `English` labels at lines 135 and 136. Those are real violations of `AGENTS.md`, not part of this exercise, so they're still to fix.
+The reviewer's rule 5 now covers any text a user sees or hears in `index.html`, new or existing, including words in `alt`, `title`, `aria-label` and `placeholder`. An empty `alt=""` is exempt. Checked on `index.html`, it now reports the existing hard-coded strings: the `<title>` at line 6, the `aria-label` at line 134, and the `עברית` and `English` labels at lines 135 and 136. Those were real violations of `AGENTS.md`; they're now fixed, and the reviewer passes rule 5 on the fixed files.
 
 ## Status
 The skill runs forked onto the agent, finds the planted violation, and keeps the main window small. Rule 5 now catches the existing hard-coded strings in `index.html`.
