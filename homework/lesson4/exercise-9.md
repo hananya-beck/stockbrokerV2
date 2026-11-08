@@ -28,11 +28,11 @@ The body is the system prompt: seven rules from `AGENTS.md` (browser storage, le
 - [x] The first run also flagged the header comment that mentions `localStorage` (line 2). The body now says a match inside a comment isn't a violation. The rerun flags only line 214.
 - [x] Asked to fix (`claude -p "Ask the policy-reviewer agent to fix …"`): the agent replies that it is read-only and can't fix it. `src/lib/formatting.js` was unchanged afterwards. The main session then offered to make the fix itself. That's the main session's behaviour, not the agent's.
 - [x] The plant was reverted with `git checkout`; `git status` shows only the new agent folder.
-- [ ] **Not checked:** the agent reviewing a diff, not a file. The reviewer has no Bash, so the session passes it the file names; a diff would need a `git diff` run by the main session.
+- [x] **Diff review:** the main session ran `git diff` into a file and asked the agent to review it. The agent read the diff and the changed file with its own tools and returned `FAIL` with `index.html:486`, a leading `/` in `<img src>` (rule 2). The plant was then reverted.
 
 ## Notes
 - **Reply length.** The first reply ran a few lines over the 15-line limit, and in the fix run the main session reported more than the agent said. The brief should cap the length of what the main session asks for, not only the agent's own reply.
 - **Line numbers.** The agent's first reply gave line 214 and then said 215 was the call. Line 214 is correct.
 
 ## Status
-The agent, the delegation, the refusal to fix and the revert all check out. The diff-review case is still open.
+The agent, the delegation, the refusal to fix, the diff review and the revert all check out.
