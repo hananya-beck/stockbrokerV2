@@ -46,6 +46,9 @@ export const LOCALE = { he: 'he-IL', en: 'en-US' };
 export const STRINGS = {
   he: {
     title: 'StockBroker — יועץ השקעות',
+    langGroup: 'שפה',
+    langHe: 'עברית',
+    langEn: 'English',
     heading: 'לאן להפקיד החודש?',
     subheading: 'דירוג 7 המדדים/קרנות שלך לפי תשואה מותאמת סיכון, משוקללת על פני 1/3/5 שנים (ככל שיש נתונים), והצעת חלוקה להפקדה החודשית.',
     amountLabel: 'סכום להפקדה (₪):',
@@ -81,6 +84,9 @@ export const STRINGS = {
   },
   en: {
     title: 'StockBroker — Investment Advisor',
+    langGroup: 'Language',
+    langHe: 'עברית',
+    langEn: 'English',
     heading: 'Where should this month’s deposit go?',
     subheading: 'Ranks your 7 indices/funds by a risk-adjusted score blended across 1/3/5-year windows (wherever history exists), and suggests how to split this month’s deposit.',
     amountLabel: 'Deposit amount (₪):',

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>StockBroker</title>
+<title></title>
 <link rel="stylesheet" href="src/styles/tokens.css" />
 <style>
   * { box-sizing: border-box; }
@@ -131,9 +131,9 @@
       <h1 id="heading"></h1>
       <p class="sub" id="subheading"></p>
     </div>
-    <div class="lang-switch" role="group" aria-label="Language / שפה">
-      <button type="button" data-lang="he" aria-pressed="true">עברית</button>
-      <button type="button" data-lang="en" aria-pressed="false">English</button>
+    <div class="lang-switch" role="group">
+      <button type="button" data-lang="he" aria-pressed="true"></button>
+      <button type="button" data-lang="en" aria-pressed="false"></button>
     </div>
   </div>
 
@@ -283,8 +283,11 @@ function applyStaticText() {
     if (el) el.textContent = t(lang, id);
   }
   document.getElementById('refreshBtn').textContent = t(lang, 'refreshButton');
+  /** @type {HTMLElement} */ (document.querySelector('.lang-switch')).setAttribute('aria-label', t(lang, 'langGroup'));
   for (const btn of document.querySelectorAll('.lang-switch button')) {
-    btn.setAttribute('aria-pressed', String(/** @type {HTMLElement} */ (btn).dataset.lang === lang));
+    const button = /** @type {HTMLElement} */ (btn);
+    button.textContent = t(lang, button.dataset.lang === 'he' ? 'langHe' : 'langEn');
+    button.setAttribute('aria-pressed', String(button.dataset.lang === lang));
   }
 }
 
