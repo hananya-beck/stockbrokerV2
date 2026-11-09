@@ -10,7 +10,7 @@
       "Bash(python -m mypy *)"
     ]
   },
-  "model": "haiku",
+  "model": "sonnet",
   "enabledPlugins": {
     "stockbroker-tools@stockbroker-marketplace": true,
     "stock-browser@stockbroker-marketplace": true
