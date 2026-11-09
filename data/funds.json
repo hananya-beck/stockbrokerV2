@@ -1,6 +1,30 @@
 {
-  "generated_at": "2026-11-08T11:45:57.216473+00:00",
+  "generated_at": "2026-11-09T13:40:19.293209+00:00",
   "funds": [
+    {
+      "id": "5109889",
+      "name_he": "MTF מחקה ת\"א 125",
+      "name_en": "TASE 125",
+      "metrics": {
+        "return_1m": -0.027745158987819818,
+        "return_3m": -0.05203843390804597,
+        "return_6m": -0.12575569358178051,
+        "return_1y": 0.1538419499398842,
+        "volatility_1y": 0.18708747736789733,
+        "return_3y": 0.30024461040903305,
+        "volatility_3y": 0.17197977401988537,
+        "return_5y": null,
+        "volatility_5y": null,
+        "score_basis": "long_horizons",
+        "risk_adjusted_score": 1.136256265908264,
+        "volatility_blended": 0.17827465041489035,
+        "history_days": 1228,
+        "last_price": 422.26,
+        "last_date": "2026-11-06"
+      },
+      "stale": false,
+      "suggested_weight": 0.1941
+    },
     {
       "id": "1168723",
       "name_he": "MTF סל אינדקס אנרגיה מתחדשת ישראל",
@@ -18,84 +42,60 @@
         "score_basis": "long_horizons",
         "risk_adjusted_score": 1.0997705292807134,
         "volatility_blended": 0.2858819364432176,
-        "history_days": 1229,
+        "history_days": 1228,
         "last_price": 1721.0,
         "last_date": "2026-11-06"
       },
       "stale": false,
-      "suggested_weight": 0.2017
-    },
-    {
-      "id": "5109889",
-      "name_he": "MTF מחקה ת\"א 125",
-      "name_en": "TASE 125",
-      "metrics": {
-        "return_1m": -0.07680722891566272,
-        "return_3m": -0.08688499077347211,
-        "return_6m": -0.13835857844165667,
-        "return_1y": 0.12209715316102954,
-        "volatility_1y": 0.18509775380931015,
-        "return_3y": 0.25886957541833144,
-        "volatility_3y": 0.1760222590640376,
-        "return_5y": null,
-        "volatility_5y": null,
-        "score_basis": "long_horizons",
-        "risk_adjusted_score": 0.9101341074927015,
-        "volatility_blended": 0.17980371520790114,
-        "history_days": 1228,
-        "last_price": 410.71,
-        "last_date": "2026-11-05"
-      },
-      "stale": false,
-      "suggested_weight": 0.1835
+      "suggested_weight": 0.1908
     },
     {
       "id": "5130604",
       "name_he": "MTF מחקה אינדקס תשתיות לאומיות ישראל",
       "name_en": "Infrastructure",
       "metrics": {
-        "return_1m": -0.03927098388973116,
-        "return_3m": -0.14521845497600605,
-        "return_6m": -0.1706077482577072,
-        "return_1y": 0.21129827992355188,
-        "volatility_1y": 0.23407571571144659,
-        "return_3y": 0.26767436534061706,
-        "volatility_3y": 0.22200308451936498,
+        "return_1m": -0.016843908357718984,
+        "return_3m": -0.12076338801302089,
+        "return_6m": -0.18005952380952384,
+        "return_1y": 0.220322466335932,
+        "volatility_1y": 0.2342770572166024,
+        "return_3y": 0.31364908733023156,
+        "volatility_3y": 0.21489104262013273,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 0.9031547818810367,
-        "volatility_blended": 0.22703334751606566,
+        "risk_adjusted_score": 1.063542510602867,
+        "volatility_blended": 0.22296854870199512,
         "history_days": 1228,
-        "last_price": 272.53,
-        "last_date": "2026-11-05"
+        "last_price": 275.5,
+        "last_date": "2026-11-06"
       },
       "stale": false,
-      "suggested_weight": 0.1828
+      "suggested_weight": 0.1874
     },
     {
       "id": "5131081",
       "name_he": "הראל מחקה ת\"א טכנולוגיה",
       "name_en": "Technology TA",
       "metrics": {
-        "return_1m": -0.13950686346228314,
-        "return_3m": -0.17548344534696736,
-        "return_6m": -0.24445535950428843,
-        "return_1y": 0.07835418464193267,
-        "volatility_1y": 0.256700286344967,
-        "return_3y": 0.21928022760931598,
-        "volatility_3y": 0.20568054265023247,
+        "return_1m": -0.09145253390435404,
+        "return_3m": -0.1469380916478178,
+        "return_6m": -0.2493734335839599,
+        "return_1y": 0.09506398537477145,
+        "volatility_1y": 0.25731452251414116,
+        "return_3y": 0.24711206315367518,
+        "volatility_3y": 0.20387280247557127,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 0.5707141795595773,
-        "volatility_blended": 0.22693876918970524,
+        "risk_adjusted_score": 0.6817662293793396,
+        "volatility_blended": 0.22614018582497536,
         "history_days": 1228,
-        "last_price": 199.97,
-        "last_date": "2026-11-05"
+        "last_price": 203.66,
+        "last_date": "2026-11-06"
       },
       "stale": false,
-      "suggested_weight": 0.1508
+      "suggested_weight": 0.1525
     },
     {
       "id": "1159243",
@@ -114,21 +114,21 @@
         "score_basis": "long_horizons",
         "risk_adjusted_score": 0.3907966514824362,
         "volatility_blended": 0.15833148957175425,
-        "history_days": 1229,
+        "history_days": 1228,
         "last_price": 497000.0,
         "last_date": "2026-11-06"
       },
       "stale": false,
-      "suggested_weight": 0.1335
+      "suggested_weight": 0.1258
     },
     {
       "id": "5141312",
       "name_he": "קסם KTF אינדקס בנקים ישראל",
       "name_en": "Banks",
       "metrics": {
-        "return_1m": -0.047283613630360044,
-        "return_3m": -0.02872531418312385,
-        "return_6m": -0.05278823426420376,
+        "return_1m": 0.009289031797070413,
+        "return_3m": 0.02262443438914019,
+        "return_6m": -0.009293354374890428,
         "return_1y": null,
         "volatility_1y": null,
         "return_3y": null,
@@ -136,23 +136,23 @@
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "partial_history",
-        "risk_adjusted_score": 0.06531478959811332,
+        "risk_adjusted_score": 0.1585914593766413,
         "volatility_blended": null,
-        "history_days": 249,
-        "last_price": 108.2,
-        "last_date": "2026-11-05"
+        "history_days": 250,
+        "last_price": 113.0,
+        "last_date": "2026-11-06"
       },
       "stale": false,
-      "suggested_weight": 0.1021
+      "suggested_weight": 0.1045
     },
     {
       "id": "5141775",
       "name_he": "הראל מחקה ת\"א בטחוניות",
       "name_en": "Israel Defense Forces (TA Defense index)",
       "metrics": {
-        "return_1m": -0.13111217641418982,
-        "return_3m": -0.2765914987028537,
-        "return_6m": -0.37055044278520577,
+        "return_1m": -0.07004134820197971,
+        "return_3m": -0.2515127067365873,
+        "return_6m": -0.3696279938848309,
         "return_1y": null,
         "volatility_1y": null,
         "return_3y": null,
@@ -160,14 +160,14 @@
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "partial_history",
-        "risk_adjusted_score": -0.5219970931563384,
+        "risk_adjusted_score": -0.4917593022479944,
         "volatility_blended": null,
-        "history_days": 209,
-        "last_price": 72.5,
-        "last_date": "2026-11-05"
+        "history_days": 210,
+        "last_price": 74.22,
+        "last_date": "2026-11-06"
       },
       "stale": false,
-      "suggested_weight": 0.0456
+      "suggested_weight": 0.0449
     }
   ]
 }
