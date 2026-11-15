@@ -1,0 +1,8 @@
+{
+  "session_id": "demo-session",
+  "cwd": "/c/Users/Hananya/projects/stockbrokerV2",
+  "permission_mode": "acceptEdits",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Bash",
+  "tool_input": { "command": "git push --force origin main" }
+}
