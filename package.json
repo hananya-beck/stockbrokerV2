@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit -p jsconfig.json",
-    "lint": "eslint src tests",
+    "lint": "eslint --max-warnings=0 src tests",
     "test": "node --test tests/js",
     "check": "npm run typecheck && npm run lint && npm run test"
   },
