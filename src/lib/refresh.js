@@ -97,6 +97,7 @@ const DEFAULT_API_ERROR = {
  * @param {number} status - HTTP status code.
  * @param {import('./i18n.js').Lang} [lang]
  * @returns {string}
+ * @example describeApiError(404, 'he') // => 'הריפו או ה-workflow לא נמצאו, או שלטוקן אין גישה (404)'
  */
 export function describeApiError(status, lang = 'he') {
   const text = API_ERROR_TEXT[lang] ?? API_ERROR_TEXT.he;

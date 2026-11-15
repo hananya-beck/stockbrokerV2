@@ -1,0 +1,8 @@
+{
+  "session_id": "demo-session",
+  "cwd": "/c/Users/Hananya/projects/stockbrokerV2",
+  "permission_mode": "acceptEdits",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Write",
+  "tool_input": { "file_path": ".env", "content": "GITHUB_TOKEN=xxx" }
+}
