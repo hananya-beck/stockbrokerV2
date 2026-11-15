@@ -110,6 +110,18 @@
     cursor: pointer;
   }
   .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .table-actions { display: flex; justify-content: flex-end; margin-bottom: var(--space-3); }
+  .export-btn {
+    font: inherit;
+    font-size: var(--font-size-sm);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    border: var(--border-width) solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .export-btn:disabled { opacity: 0.6; cursor: not-allowed; }
   .refresh-status { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--muted); font-size: var(--font-size-sm); }
   .refresh-status.error { color: var(--bad); }
   .spinner {
@@ -152,6 +164,9 @@
   </div>
 
   <div class="card">
+    <div class="table-actions">
+      <button type="button" class="export-btn" id="exportBtn" disabled></button>
+    </div>
     <div class="table-scroll">
       <table id="fundsTable">
         <thead>
@@ -196,6 +211,7 @@
 
 <script type="module">
 import { buildFundRowViewModel, formatRelativeTime, summarizeAllocation } from './src/lib/formatting.js';
+import { buildFundsCsv } from './src/lib/csv.js';
 import { describeApiError, describeRunState, dispatchedRunId, dispatchedRunsQuery, isPastDeadline, pickDispatchedRun } from './src/lib/refresh.js';
 import { DIRECTION, LOCALE, resolveLang, t, withLang } from './src/lib/i18n.js';
 
@@ -210,6 +226,7 @@ function cell(v) {
 }
 
 const tbody = document.getElementById('fundsBody');
+const exportBtn = /** @type {HTMLButtonElement} */ (document.getElementById('exportBtn'));
 const amountInput = /** @type {HTMLInputElement} */ (document.getElementById('amount'));
 let data = null;
 
@@ -274,7 +291,7 @@ function applyStaticText() {
   document.documentElement.dir = DIRECTION[lang];
   document.title = t(lang, 'title');
   for (const id of [
-    'heading', 'subheading', 'amountLabel', 'refreshButton', 'scheduleNote',
+    'heading', 'subheading', 'amountLabel', 'refreshButton', 'exportButton', 'scheduleNote',
     'colFund', 'colId', 'col1m', 'col3m', 'col1y', 'col3y', 'col5y',
     'colVol1y', 'colVol3y', 'colVol5y', 'colVolBlended', 'colScore', 'colWeight', 'colAmount',
     'tokenLabel', 'tokenConfirm', 'tokenCancel', 'disclaimerBold', 'disclaimerBody',
@@ -304,6 +321,7 @@ for (const btn of document.querySelectorAll('.lang-switch button')) {
 
 function showData(newData) {
   data = newData;
+  exportBtn.disabled = false;
   document.getElementById('updated').textContent =
     t(lang, 'updatedPrefix') + new Date(data.generated_at).toLocaleString(LOCALE[lang]) +
     ' (' + formatRelativeTime(data.generated_at, new Date(), lang) + ')';
@@ -485,6 +503,27 @@ async function refresh() {
 }
 
 refreshBtn.addEventListener('click', refresh);
+
+// The BOM makes Excel read the file as UTF-8; without it the Hebrew names show as mojibake.
+function downloadCsv(filename, csv) {
+  const url = URL.createObjectURL(new Blob(['﻿', csv], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+exportBtn.addEventListener('click', () => {
+  try {
+    const amount = parseFloat(amountInput.value) || 0;
+    downloadCsv(t(lang, 'exportFilename'), buildFundsCsv(sortedFunds(), amount, lang));
+  } catch (err) {
+    setStatus(t(lang, 'exportError') + err.message, { error: true });
+  }
+});
 </script>
 </body>
 </html>
