@@ -30,6 +30,25 @@
             "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-writes.mjs"
           }
         ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-log.mjs"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-log.mjs"
+          }
+        ]
       }
     ],
     "PostToolUse": [
