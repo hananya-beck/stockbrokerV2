@@ -165,7 +165,7 @@
 
   <div class="card">
     <div class="table-actions">
-      <button type="button" class="export-btn" id="exportBtn" disabled></button>
+      <button type="button" class="export-btn" id="exportButton" disabled></button>
     </div>
     <div class="table-scroll">
       <table id="fundsTable">
@@ -226,7 +226,7 @@ function cell(v) {
 }
 
 const tbody = document.getElementById('fundsBody');
-const exportBtn = /** @type {HTMLButtonElement} */ (document.getElementById('exportBtn'));
+const exportBtn = /** @type {HTMLButtonElement} */ (document.getElementById('exportButton'));
 const amountInput = /** @type {HTMLInputElement} */ (document.getElementById('amount'));
 let data = null;
 
