@@ -1,6 +1,30 @@
 {
-  "generated_at": "2026-11-27T14:46:43.867375+00:00",
+  "generated_at": "2026-11-28T13:57:04.257473+00:00",
   "funds": [
+    {
+      "id": "1168723",
+      "name_he": "MTF סל אינדקס אנרגיה מתחדשת ישראל",
+      "name_en": "Renewable Energy",
+      "metrics": {
+        "return_1m": -0.0028768699654775354,
+        "return_3m": -0.1251892983341747,
+        "return_6m": -0.29724249797242497,
+        "return_1y": 0.3688783570300158,
+        "volatility_1y": 0.3375286794111549,
+        "return_3y": 0.3608833424384923,
+        "volatility_3y": 0.25657459162922774,
+        "return_5y": null,
+        "volatility_5y": null,
+        "score_basis": "long_horizons",
+        "risk_adjusted_score": 1.1355301989285713,
+        "volatility_blended": 0.29030546153836406,
+        "history_days": 1229,
+        "last_price": 1733.0,
+        "last_date": "2026-11-27"
+      },
+      "stale": false,
+      "suggested_weight": 0.199
+    },
     {
       "id": "5130604",
       "name_he": "MTF מחקה אינדקס תשתיות לאומיות ישראל",
@@ -23,7 +47,7 @@
         "last_date": "2026-11-26"
       },
       "stale": false,
-      "suggested_weight": 0.199
+      "suggested_weight": 0.1959
     },
     {
       "id": "5109889",
@@ -47,31 +71,7 @@
         "last_date": "2026-11-26"
       },
       "stale": false,
-      "suggested_weight": 0.1985
-    },
-    {
-      "id": "1168723",
-      "name_he": "MTF סל אינדקס אנרגיה מתחדשת ישראל",
-      "name_en": "Renewable Energy",
-      "metrics": {
-        "return_1m": -0.02085747392815762,
-        "return_3m": -0.17075564278704614,
-        "return_6m": -0.3076607947562474,
-        "return_1y": 0.3307086614173229,
-        "volatility_1y": 0.3367069514013036,
-        "return_3y": 0.3494025019182876,
-        "volatility_3y": 0.2562041238608502,
-        "return_5y": null,
-        "volatility_5y": null,
-        "score_basis": "long_horizons",
-        "risk_adjusted_score": 1.0642019178725495,
-        "volatility_blended": 0.2897469686693724,
-        "history_days": 1228,
-        "last_price": 1690.0,
-        "last_date": "2026-11-26"
-      },
-      "stale": false,
-      "suggested_weight": 0.195
+      "suggested_weight": 0.1954
     },
     {
       "id": "5131081",
@@ -95,31 +95,31 @@
         "last_date": "2026-11-26"
       },
       "stale": false,
-      "suggested_weight": 0.1599
+      "suggested_weight": 0.1576
     },
     {
       "id": "1159243",
       "name_he": "ISHARES NASDAQ 100 UCITS ETF",
       "name_en": "Nasdaq 100 (unhedged, Barclays)",
       "metrics": {
-        "return_1m": -0.06562910181886372,
-        "return_3m": -0.013267326732673279,
-        "return_6m": 0.0058538554703269075,
-        "return_1y": 0.06977243452125381,
-        "volatility_1y": 0.1641370835885418,
-        "return_3y": 0.1464423765818783,
-        "volatility_3y": 0.16502499452796238,
+        "return_1m": -0.036847103513770185,
+        "return_3m": 0.017864311521477383,
+        "return_6m": 0.034897959183673555,
+        "return_1y": 0.08819742489270377,
+        "volatility_1y": 0.16503622939986876,
+        "return_3y": 0.1531517751326441,
+        "volatility_3y": 0.16531466033969983,
         "return_5y": null,
         "volatility_5y": null,
         "score_basis": "long_horizons",
-        "risk_adjusted_score": 0.45183261051236684,
-        "volatility_blended": 0.16465503163653714,
-        "history_days": 1228,
-        "last_price": 498300.0,
-        "last_date": "2026-11-26"
+        "risk_adjusted_score": 0.5209540577490588,
+        "volatility_blended": 0.16519864744810356,
+        "history_days": 1229,
+        "last_price": 507100.0,
+        "last_date": "2026-11-27"
       },
       "stale": false,
-      "suggested_weight": 0.134
+      "suggested_weight": 0.139
     },
     {
       "id": "5141312",
@@ -143,7 +143,7 @@
         "last_date": "2026-11-26"
       },
       "stale": false,
-      "suggested_weight": 0.0682
+      "suggested_weight": 0.0677
     },
     {
       "id": "5141775",
